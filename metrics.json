@@ -1,0 +1,27 @@
+[
+  {
+    "repo": "go-discover",
+    "open_issues": 0,
+    "open_prs": 0
+  },
+  {
+    "repo": "hcl",
+    "open_issues": 0,
+    "open_prs": 0
+  },
+  {
+    "repo": "go-bexpr",
+    "open_issues": 0,
+    "open_prs": 0
+  },
+  {
+    "repo": "go-memdb",
+    "open_issues": 0,
+    "open_prs": 0
+  },
+  {
+    "repo": "go-getter",
+    "open_issues": 0,
+    "open_prs": 0
+  }
+]
