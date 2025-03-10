@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repo Metrics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>GitHub Repository Metrics</h2>
+    <table id="repoTable">
+        <thead>
+            <tr>
+                <th>Repository</th>
+                <th>Open Issues</th>
+                <th>Open PRs</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function loadMetrics() {
+            try {
+                const response = await fetch('metrics.json'); // Adjust path if needed
+                const data = await response.json();
+                const tableBody = document.querySelector("#repoTable tbody");
+                tableBody.innerHTML = "";
+
+                data.forEach(repo => {
+                    const row = `<tr>
+                        <td>${repo.repo}</td>
+                        <td>${repo.open_issues}</td>
+                        <td>${repo.open_prs}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Error loading JSON:", error);
+            }
+        }
+
+        loadMetrics();
+    </script>
+
+</body>
+</html>
