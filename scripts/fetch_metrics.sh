@@ -11,11 +11,6 @@ if [[ ! -f "$REPO_FILE" ]]; then
     exit 1
 fi
 
-if [[ -z "$GITHUB_OWNER" ]]; then
-    echo "Error: GITHUB_OWNER is not set!" >&2
-    exit 1
-fi
-
 fetch_metrics() {
     repo=$1
 
