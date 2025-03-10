@@ -1,2 +1,2 @@
 # dashboard-metrics
-Collect Github metrics for Dashboard
+Test repo to store dashboard metrics

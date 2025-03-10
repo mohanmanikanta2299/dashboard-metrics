@@ -1,0 +1,5 @@
+go-getter
+go-discover
+go-memdb
+hcl
+go-bexpr
