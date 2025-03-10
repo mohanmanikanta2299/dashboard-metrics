@@ -10,24 +10,14 @@
     "open_prs": 6
   },
   {
-    "repo": "go-memdb",
-    "open_issues": 34,
-    "open_prs": 12
-  },
-  {
-    "repo": "go-getter",
-    "open_issues": 134,
-    "open_prs": 41
-  },
-  {
     "repo": "go-bexpr",
     "open_issues": 8,
     "open_prs": 10
   },
   {
-    "repo": "go-discover",
-    "open_issues": 42,
-    "open_prs": 43
+    "repo": "go-memdb",
+    "open_issues": 34,
+    "open_prs": 12
   },
   {
     "repo": "go-metrics",
@@ -35,13 +25,23 @@
     "open_prs": 25
   },
   {
-    "repo": "hcl",
-    "open_issues": 169,
-    "open_prs": 56
-  },
-  {
     "repo": "go-plugin",
     "open_issues": 61,
     "open_prs": 24
+  },
+  {
+    "repo": "go-discover",
+    "open_issues": 42,
+    "open_prs": 43
+  },
+  {
+    "repo": "go-getter",
+    "open_issues": 134,
+    "open_prs": 41
+  },
+  {
+    "repo": "hcl",
+    "open_issues": 169,
+    "open_prs": 56
   }
 ]
