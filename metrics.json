@@ -1,27 +1,7 @@
 [
   {
-    "repo": "go-slug",
-    "open_issues": 11,
-    "open_prs": 6
-  },
-  {
-    "repo": "go-bexpr",
-    "open_issues": 18,
-    "open_prs": 10
-  },
-  {
-    "repo": "hcl",
-    "open_issues": 225,
-    "open_prs": 30
-  },
-  {
     "repo": "go-getter",
     "open_issues": 175,
-    "open_prs": 30
-  },
-  {
-    "repo": "go-discover",
-    "open_issues": 85,
     "open_prs": 30
   }
 ]
