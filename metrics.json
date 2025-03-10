@@ -1,7 +1,47 @@
 [
   {
+    "repo": "go-eventlogger",
+    "open_issues": 6,
+    "open_prs": 5
+  },
+  {
+    "repo": "go-slug",
+    "open_issues": 11,
+    "open_prs": 6
+  },
+  {
+    "repo": "go-bexpr",
+    "open_issues": 18,
+    "open_prs": 10
+  },
+  {
+    "repo": "go-memdb",
+    "open_issues": 46,
+    "open_prs": 12
+  },
+  {
     "repo": "go-getter",
     "open_issues": 175,
+    "open_prs": 30
+  },
+  {
+    "repo": "go-metrics",
+    "open_issues": 57,
+    "open_prs": 25
+  },
+  {
+    "repo": "hcl",
+    "open_issues": 225,
+    "open_prs": 30
+  },
+  {
+    "repo": "go-plugin",
+    "open_issues": 85,
+    "open_prs": 24
+  },
+  {
+    "repo": "go-discover",
+    "open_issues": 85,
     "open_prs": 30
   }
 ]
