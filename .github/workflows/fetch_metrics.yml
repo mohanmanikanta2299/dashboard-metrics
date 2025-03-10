@@ -2,7 +2,7 @@ name: Update Repository Metrics
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs every hour
+    - cron: '0 10 * * *'  # Runs every day
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
