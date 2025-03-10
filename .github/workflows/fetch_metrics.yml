@@ -71,18 +71,23 @@ jobs:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           result-encoding: string
           script: |
-            const { BRANCH_NAME } = process.env;
+            const branchName = process.env.BRANCH_NAME;
+            if (!branchName) {
+              throw new Error("BRANCH_NAME environment variable is not set.");
+            }
+              
             const pr = await github.rest.pulls.create({
               owner: "mohanmanikanta2299",
               repo: "dashboard-metrics",
               title: "Automated Update: Repository Metrics",
-              head: BRANCH_NAME,
+              head: branchName,
               base: "main",
               body: "This PR updates `metrics.json` with the latest repository metrics.",
               maintainer_can_modify: true
             });
+  
             console.log(`PR Created: ${pr.data.html_url}`);
-            core.setOutput("pr_number", pr.data.number);  # Properly expose PR number
+            core.setOutput("pr_number", pr.data.number);
 
   merge-pr:
     needs: update-metrics
