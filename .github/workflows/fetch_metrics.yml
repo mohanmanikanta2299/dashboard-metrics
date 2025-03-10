@@ -17,7 +17,7 @@ jobs:
         run: |
           git config --global user.name "mohanmanikanta2299"
           git config --global user.email "mohan.manikanta@hashicorp.com"
-          git remote set-url origin https://mohanmanikanta2299:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/mohanmanikanta2299/dashboard-metrics_test.git
+          git remote set-url origin https://mohanmanikanta2299:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/mohanmanikanta2299/dashboard-metrics.git
 
       - name: Set Up Environment
         run: |
@@ -50,7 +50,7 @@ jobs:
             const { BRANCH_NAME } = process.env;
             github.rest.pulls.create({
               owner: "mohanmanikanta2299",
-              repo: "dashboard-metrics_test",
+              repo: "dashboard-metrics",
               title: "Automated Update: Repository Metrics",
               head: BRANCH_NAME,
               base: "main",
