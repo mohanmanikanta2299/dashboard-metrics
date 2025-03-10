@@ -1,1 +1,5 @@
 go-getter
+go-discover
+go-bexpr
+hcl
+go-slug
