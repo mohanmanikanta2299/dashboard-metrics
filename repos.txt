@@ -1,1 +1,9 @@
 go-getter
+go-slug
+go-discover
+go-bexpr
+hcl
+go-eventlogger
+go-plugin
+go-metrics
+go-memdb
