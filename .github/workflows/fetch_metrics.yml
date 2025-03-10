@@ -36,6 +36,9 @@ jobs:
           chmod +x scripts/fetch_metrics.sh
           ./scripts/fetch_metrics.sh
 
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
       - name: Create Branch and Commit Changes
         run: |
           BRANCH_NAME="update-metrics-$(date +%Y%m%d%H%M%S)"

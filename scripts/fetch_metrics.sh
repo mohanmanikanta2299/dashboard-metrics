@@ -19,8 +19,6 @@ fetch_metrics() {
                      -H "Accept: application/vnd.github.v3+json" \
                      "https://api.github.com/repos/hashicorp/$repo")
 
-    echo "Repo: $repo - Raw Response: $response"
-
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
         echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0}"
@@ -33,8 +31,6 @@ fetch_metrics() {
     pr_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
                          -H "Accept: application/vnd.github.v3+json" \
                          "https://api.github.com/repos/hashicorp/$repo/pulls?state=open")
-
-    echo "Repo: $repo - Raw Response: $pr_response"
 
     pr_count=$(echo "$pr_response" | jq 'if type == "array" then length else 0 end')
 
