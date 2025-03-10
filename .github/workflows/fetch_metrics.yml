@@ -2,7 +2,7 @@ name: Update Repository Metrics
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+    - cron: '0 * * * *'  # Runs every hour
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
@@ -39,7 +39,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
+      - name: Check for Changes
+        id: check_changes
+        run: |
+          git diff --quiet metrics.json || echo "CHANGED=true" >> $GITHUB_ENV
+
       - name: Create Branch and Commit Changes
+        if: env.CHANGED == 'true'
         run: |
           BRANCH_NAME="update-metrics-$(date +%Y%m%d%H%M%S)"
           git checkout -b $BRANCH_NAME
@@ -49,6 +55,7 @@ jobs:
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Create Pull Request
+        if: env.CHANGED == 'true'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
