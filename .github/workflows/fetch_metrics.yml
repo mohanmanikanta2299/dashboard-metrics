@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Merge Pull Request
+      - name: Merge Pull Request and Delete Branch
         uses: actions/github-script@v7
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
@@ -90,26 +90,41 @@ jobs:
             const owner = "mohanmanikanta2299";
             const repo = "dashboard-metrics";
 
+            // Fetch all open PRs
             const pulls = await github.rest.pulls.list({
               owner,
               repo,
-              state: "open",
-              head: `${owner}:update-metrics-`
+              state: "open"
             });
 
             for (const pr of pulls.data) {
-              console.log(`Merging PR #${pr.number}`);
-              await github.rest.pulls.merge({
-                owner,
-                repo,
-                pull_number: pr.number,
-                merge_method: "squash"
-              });
+              if (pr.head.ref.startsWith("update-metrics-")) {
+                console.log(`Processing PR #${pr.number}: ${pr.title}`);
 
-              console.log(`Deleting branch: ${pr.head.ref}`);
-              await github.rest.git.deleteRef({
-                owner,
-                repo,
-                ref: `heads/${pr.head.ref}`
-              });
+                // Attempt to merge the PR
+                try {
+                  await github.rest.pulls.merge({
+                    owner,
+                    repo,
+                    pull_number: pr.number,
+                    merge_method: "squash"
+                  });
+                  console.log(`Successfully merged PR #${pr.number}`);
+                } catch (error) {
+                  console.error(`Failed to merge PR #${pr.number}:`, error.message);
+                  continue;
+                }
+
+                // Delete the merged branch
+                try {
+                  await github.rest.git.deleteRef({
+                    owner,
+                    repo,
+                    ref: `heads/${pr.head.ref}`
+                  });
+                  console.log(`Deleted branch: ${pr.head.ref}`);
+                } catch (error) {
+                  console.error(`Failed to delete branch ${pr.head.ref}:`, error.message);
+                }
+              }
             }
