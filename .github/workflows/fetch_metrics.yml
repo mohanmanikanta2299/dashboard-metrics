@@ -12,6 +12,9 @@ jobs:
     permissions:
       contents: write
 
+    outputs:
+      pr_created: ${{ steps.create_pr.outputs.pr_number }}  # Expose PR number for next job
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -62,7 +65,7 @@ jobs:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
             const { BRANCH_NAME } = process.env;
-            const { data: pr } = await github.rest.pulls.create({
+            const pr = await github.rest.pulls.create({
               owner: "mohanmanikanta2299",
               repo: "dashboard-metrics",
               title: "Automated Update: Repository Metrics",
@@ -71,13 +74,14 @@ jobs:
               body: "This PR updates `metrics.json` with the latest repository metrics.",
               maintainer_can_modify: true
             });
-            console.log(`PR Created: ${pr.html_url}`);
-            console.log(`PR Number: ${pr.number}`);
-            core.setOutput("pr_number", pr.number);
+            console.log(`PR Created: ${pr.data.html_url}`);
+            core.setOutput("pr_number", pr.data.number);  # Expose PR number
 
   merge-and-cleanup:
     needs: update-metrics
     runs-on: ubuntu-latest
+
+    if: needs.update-metrics.outputs.pr_created != ''  # Only run if a PR was created
 
     steps:
       - name: Merge Pull Request and Delete Branch
@@ -89,42 +93,23 @@ jobs:
           script: |
             const owner = "mohanmanikanta2299";
             const repo = "dashboard-metrics";
+            const pr_number = "${{ needs.update-metrics.outputs.pr_created }}";
 
-            // Fetch all open PRs
-            const pulls = await github.rest.pulls.list({
-              owner,
-              repo,
-              state: "open"
-            });
+            if (!pr_number) {
+              console.log("No PR was created. Skipping merge and cleanup.");
+              return;
+            }
 
-            for (const pr of pulls.data) {
-              if (pr.head.ref.startsWith("update-metrics-")) {
-                console.log(`Processing PR #${pr.number}: ${pr.title}`);
-
-                // Attempt to merge the PR
-                try {
-                  await github.rest.pulls.merge({
-                    owner,
-                    repo,
-                    pull_number: pr.number,
-                    merge_method: "squash"
-                  });
-                  console.log(`Successfully merged PR #${pr.number}`);
-                } catch (error) {
-                  console.error(`Failed to merge PR #${pr.number}:`, error.message);
-                  continue;
-                }
-
-                // Delete the merged branch
-                try {
-                  await github.rest.git.deleteRef({
-                    owner,
-                    repo,
-                    ref: `heads/${pr.head.ref}`
-                  });
-                  console.log(`Deleted branch: ${pr.head.ref}`);
-                } catch (error) {
-                  console.error(`Failed to delete branch ${pr.head.ref}:`, error.message);
-                }
-              }
+            // Attempt to merge the PR
+            try {
+              await github.rest.pulls.merge({
+                owner,
+                repo,
+                pull_number: pr_number,
+                merge_method: "squash"
+              });
+              console.log(`Successfully merged PR #${pr_number}`);
+            } catch (error) {
+              console.error(`Failed to merge PR #${pr_number}:`, error.message);
+              return;
             }
