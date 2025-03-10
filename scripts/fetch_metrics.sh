@@ -28,19 +28,34 @@ fetch_metrics() {
     open_issues=$(echo "$response" | jq '.open_issues_count // 0')
 
     # Fetch open PR count separately
-    pr_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-                         -H "Accept: application/vnd.github.v3+json" \
-                         "https://api.github.com/repos/hashicorp/$repo/pulls?state=open")
+    pr_count=0
+    page=1
 
-    pr_count=$(echo "$pr_response" | jq 'if type == "array" then length else 0 end')
+    while :; do
+        pr_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+                             -H "Accept: application/vnd.github.v3+json" \
+                             "https://api.github.com/repos/hashicorp/$repo/pulls?state=open&page=$page&per_page=100")
+
+        count=$(echo "$pr_response" | jq 'if type == "array" then length else 0 end')
+
+        pr_count=$((pr_count + count))
+
+        # If fewer than 100 PRs are returned, it's the last page
+        [[ $count -lt 100 ]] && break
+
+        ((page++))
+    done
 
     # Validate PR count
     if [[ -z "$pr_count" || "$pr_count" == "null" ]]; then
         pr_count=0
     fi
 
+    # Subtract PR count from open issues count (actual issues count)
+    actual_issues=$((open_issues - pr_count))
+
     # Print JSON object without formatting
-    echo "{\"repo\":\"$repo\",\"open_issues\":$open_issues,\"open_prs\":$pr_count}"
+    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count}"
 }
 
 
