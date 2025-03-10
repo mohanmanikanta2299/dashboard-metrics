@@ -22,7 +22,6 @@ jobs:
       - name: Set Up Environment
         run: |
           echo "Setting up environment variables..."
-          echo "GITHUB_OWNER=hashicorp" >> $GITHUB_ENV
           echo "REPO_FILE=repos.txt" >> $GITHUB_ENV
           echo "OUTPUT_FILE=metrics.json" >> $GITHUB_ENV
 
