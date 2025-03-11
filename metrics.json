@@ -5,14 +5,14 @@
     "open_prs": 5
   },
   {
-    "repo": "go-slug",
-    "open_issues": 5,
-    "open_prs": 6
-  },
-  {
     "repo": "go-bexpr",
     "open_issues": 8,
     "open_prs": 10
+  },
+  {
+    "repo": "go-slug",
+    "open_issues": 5,
+    "open_prs": 6
   },
   {
     "repo": "go-memdb",
@@ -30,14 +30,14 @@
     "open_prs": 24
   },
   {
-    "repo": "go-discover",
-    "open_issues": 42,
-    "open_prs": 43
-  },
-  {
     "repo": "go-getter",
     "open_issues": 134,
     "open_prs": 41
+  },
+  {
+    "repo": "go-discover",
+    "open_issues": 42,
+    "open_prs": 43
   },
   {
     "repo": "hcl",
