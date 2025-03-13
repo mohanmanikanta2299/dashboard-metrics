@@ -41,7 +41,7 @@
     <script>
         async function loadMetrics() {
             try {
-                const response = await fetch('metrics.json'); // Adjust path if needed
+                const response = await fetch(`metrics.json?t=${new Date().getTime()}`);
                 const data = await response.json();
                 const tableBody = document.querySelector("#repoTable tbody");
                 tableBody.innerHTML = "";
