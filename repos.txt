@@ -17,3 +17,4 @@ raft-snapshot
 go-msgpack
 jsonapi
 raft-wal
+cli
