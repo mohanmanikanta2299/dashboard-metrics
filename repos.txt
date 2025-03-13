@@ -7,3 +7,13 @@ go-eventlogger
 go-plugin
 go-metrics
 go-memdb
+mdns
+go-blob-fetcher
+errwrap
+go-argmapper
+go-rootcerts
+go-syslog
+raft-snapshot
+go-msgpack
+jsonapi
+raft-wal
