@@ -1,18 +1,13 @@
 [
   {
-    "repo": "go-slug",
-    "open_issues": 5,
-    "open_prs": 5
-  },
-  {
     "repo": "go-eventlogger",
     "open_issues": 1,
     "open_prs": 5
   },
   {
-    "repo": "go-bexpr",
-    "open_issues": 8,
-    "open_prs": 10
+    "repo": "go-slug",
+    "open_issues": 5,
+    "open_prs": 5
   },
   {
     "repo": "go-memdb",
@@ -30,34 +25,14 @@
     "open_prs": 25
   },
   {
-    "repo": "errwrap",
-    "open_issues": 4,
-    "open_prs": 2
-  },
-  {
     "repo": "go-plugin",
     "open_issues": 61,
     "open_prs": 24
   },
   {
-    "repo": "go-argmapper",
-    "open_issues": 2,
-    "open_prs": 3
-  },
-  {
-    "repo": "go-blob-fetcher",
-    "open_issues": 1,
-    "open_prs": 11
-  },
-  {
-    "repo": "go-discover",
-    "open_issues": 42,
-    "open_prs": 43
-  },
-  {
-    "repo": "go-rootcerts",
-    "open_issues": 9,
-    "open_prs": 4
+    "repo": "errwrap",
+    "open_issues": 4,
+    "open_prs": 2
   },
   {
     "repo": "go-getter",
@@ -65,19 +40,49 @@
     "open_prs": 42
   },
   {
+    "repo": "go-blob-fetcher",
+    "open_issues": 1,
+    "open_prs": 11
+  },
+  {
+    "repo": "go-bexpr",
+    "open_issues": 8,
+    "open_prs": 10
+  },
+  {
+    "repo": "go-discover",
+    "open_issues": 42,
+    "open_prs": 43
+  },
+  {
+    "repo": "go-argmapper",
+    "open_issues": 2,
+    "open_prs": 3
+  },
+  {
+    "repo": "hcl",
+    "open_issues": 169,
+    "open_prs": 56
+  },
+  {
     "repo": "go-msgpack",
     "open_issues": 0,
     "open_prs": 0
   },
   {
-    "repo": "go-syslog",
-    "open_issues": 0,
-    "open_prs": 3
+    "repo": "go-rootcerts",
+    "open_issues": 9,
+    "open_prs": 4
   },
   {
     "repo": "raft-snapshot",
     "open_issues": 0,
     "open_prs": 5
+  },
+  {
+    "repo": "go-syslog",
+    "open_issues": 0,
+    "open_prs": 3
   },
   {
     "repo": "jsonapi",
@@ -88,11 +93,6 @@
     "repo": "raft-wal",
     "open_issues": 2,
     "open_prs": 4
-  },
-  {
-    "repo": "hcl",
-    "open_issues": 169,
-    "open_prs": 56
   },
   {
     "repo": "cli",
