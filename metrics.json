@@ -25,14 +25,24 @@
     "open_prs": 18
   },
   {
+    "repo": "go-plugin",
+    "open_issues": 61,
+    "open_prs": 24
+  },
+  {
     "repo": "go-metrics",
     "open_issues": 32,
     "open_prs": 25
   },
   {
-    "repo": "go-plugin",
-    "open_issues": 61,
-    "open_prs": 25
+    "repo": "go-discover",
+    "open_issues": 42,
+    "open_prs": 43
+  },
+  {
+    "repo": "go-getter",
+    "open_issues": 135,
+    "open_prs": 42
   },
   {
     "repo": "errwrap",
@@ -45,29 +55,19 @@
     "open_prs": 3
   },
   {
+    "repo": "hcl",
+    "open_issues": 170,
+    "open_prs": 58
+  },
+  {
     "repo": "go-blob-fetcher",
     "open_issues": 1,
     "open_prs": 11
   },
   {
-    "repo": "go-getter",
-    "open_issues": 135,
-    "open_prs": 42
-  },
-  {
-    "repo": "hcl",
-    "open_issues": 170,
-    "open_prs": 57
-  },
-  {
     "repo": "go-rootcerts",
     "open_issues": 9,
     "open_prs": 4
-  },
-  {
-    "repo": "go-discover",
-    "open_issues": 42,
-    "open_prs": 43
   },
   {
     "repo": "go-syslog",
