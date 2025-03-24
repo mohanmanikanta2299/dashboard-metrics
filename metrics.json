@@ -5,19 +5,24 @@
     "open_prs": 5
   },
   {
-    "repo": "go-bexpr",
-    "open_issues": 8,
-    "open_prs": 9
-  },
-  {
     "repo": "go-slug",
     "open_issues": 5,
-    "open_prs": 5
+    "open_prs": 6
   },
   {
     "repo": "go-memdb",
     "open_issues": 34,
     "open_prs": 10
+  },
+  {
+    "repo": "go-metrics",
+    "open_issues": 32,
+    "open_prs": 25
+  },
+  {
+    "repo": "go-bexpr",
+    "open_issues": 8,
+    "open_prs": 9
   },
   {
     "repo": "mdns",
@@ -30,9 +35,9 @@
     "open_prs": 24
   },
   {
-    "repo": "go-metrics",
-    "open_issues": 32,
-    "open_prs": 25
+    "repo": "errwrap",
+    "open_issues": 4,
+    "open_prs": 2
   },
   {
     "repo": "go-blob-fetcher",
@@ -45,29 +50,9 @@
     "open_prs": 3
   },
   {
-    "repo": "errwrap",
-    "open_issues": 4,
-    "open_prs": 2
-  },
-  {
-    "repo": "go-discover",
-    "open_issues": 42,
-    "open_prs": 43
-  },
-  {
-    "repo": "go-rootcerts",
-    "open_issues": 9,
-    "open_prs": 4
-  },
-  {
-    "repo": "hcl",
-    "open_issues": 170,
-    "open_prs": 58
-  },
-  {
-    "repo": "go-getter",
-    "open_issues": 135,
-    "open_prs": 42
+    "repo": "go-msgpack",
+    "open_issues": 0,
+    "open_prs": 0
   },
   {
     "repo": "raft-snapshot",
@@ -75,19 +60,29 @@
     "open_prs": 5
   },
   {
-    "repo": "go-syslog",
-    "open_issues": 0,
-    "open_prs": 3
+    "repo": "go-getter",
+    "open_issues": 135,
+    "open_prs": 42
   },
   {
-    "repo": "go-msgpack",
-    "open_issues": 0,
-    "open_prs": 0
+    "repo": "go-rootcerts",
+    "open_issues": 9,
+    "open_prs": 4
   },
   {
     "repo": "jsonapi",
     "open_issues": 0,
     "open_prs": 2
+  },
+  {
+    "repo": "go-syslog",
+    "open_issues": 0,
+    "open_prs": 3
+  },
+  {
+    "repo": "hcl",
+    "open_issues": 170,
+    "open_prs": 57
   },
   {
     "repo": "raft-wal",
@@ -98,5 +93,10 @@
     "repo": "cli",
     "open_issues": 0,
     "open_prs": 3
+  },
+  {
+    "repo": "go-discover",
+    "open_issues": 42,
+    "open_prs": 43
   }
 ]
