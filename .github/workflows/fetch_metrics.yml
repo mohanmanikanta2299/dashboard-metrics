@@ -28,6 +28,9 @@ jobs:
           chmod +x scripts/generate_jwt.sh
           echo "JWT=$(./scripts/generate_jwt.sh '${{ secrets.GH_APP_ID }}' '${{ secrets.GH_APP_PRIVATE_KEY }}')" >> $GITHUB_ENV
 
+      - name: Print all environment variables
+        run: env
+
       - name: Get GitHub App Installation Token
         id: get_installation_token
         run: |
