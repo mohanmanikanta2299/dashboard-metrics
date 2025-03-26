@@ -17,7 +17,7 @@ fetch_metrics() {
     # Fetch repository details (includes open_issues_count)
     response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
                      -H "Accept: application/vnd.github.v3+json" \
-                     "https://api.github.com/repos/hashicorp/$repo")
+                     "https://api.github.com/repos/mohanmanikanta2299/$repo")
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
@@ -34,7 +34,7 @@ fetch_metrics() {
     while :; do
         pr_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
-                             "https://api.github.com/repos/hashicorp/$repo/pulls?state=open&page=$page&per_page=100")
+                             "https://api.github.com/repos/mohanmanikanta2299/$repo/pulls?state=open&page=$page&per_page=100")
 
         count=$(echo "$pr_response" | jq 'if type == "array" then length else 0 end')
 

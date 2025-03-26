@@ -1,6 +1,2 @@
-go-getter
-go-slug
-go-memdb
-go-metrics
-hcl
-go-hclog
+test1
+test3

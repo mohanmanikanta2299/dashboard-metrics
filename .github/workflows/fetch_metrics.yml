@@ -5,6 +5,9 @@ on:
     - cron: '0 10 * * *'  # Runs every day
   workflow_dispatch:  # Allows manual trigger
 
+env:
+  branch_name: metrics/update-metrics
+
 jobs:
   update-metrics:
     runs-on: ubuntu-latest
@@ -14,40 +17,33 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Create GH App Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          # required
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false  # Use custom authentication
-
-      - name: Install Dependencies
-        run: sudo apt-get install -y jq
-
-      - name: Debug JWT Script
-        env: 
-          PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
-        run: |
-          set -x  # Enable debugging output
-          chmod +x scripts/generate_jwt.sh
-          ls -l scripts/generate_jwt.sh  # Check file permissions
-          file scripts/generate_jwt.sh   # Check file type
-          printf "%s" "$PRIVATE_KEY" > private-key.pem
-          chmod 600 private-key.pem
-          cat private-key.pem | head -5  # Print first 5 lines to check correctness
-          TOKEN=$(./scripts/generate_jwt.sh '${{ secrets.GH_APP_ID }}' '${{ secrets.GH_APP_INSTALLATION_ID }}')
-          echo "Generated Token: $TOKEN"
-          echo "INSTALLATION_TOKEN=$TOKEN" >> $GITHUB_ENV
+          token: ${{ steps.app-token.outputs.token }}
+          ref: ${{ github.head_ref }}
+          # Make sure the value of GITHUB_TOKEN will not be persisted in repo's config
+          persist-credentials: false
 
       - name: Set Up Environment Variables
         run: |
           echo "REPO_FILE=repos.txt" >> $GITHUB_ENV
           echo "OUTPUT_FILE=metrics.json" >> $GITHUB_ENV
-
+  
       - name: Run Metrics Fetch Script
         run: |
           chmod +x scripts/fetch_metrics.sh
           ./scripts/fetch_metrics.sh
         env:
-          GITHUB_TOKEN: ${{ env.INSTALLATION_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Check for Changes
         id: check_changes
@@ -60,40 +56,22 @@ jobs:
             echo "CHANGED=true" >> $GITHUB_ENV
           fi
 
-      - name: Create Branch and Commit Changes
-        if: env.CHANGED == 'true' || env.CHANGED == '1'
-        run: |
-          BRANCH_NAME="update-metrics-$(date +%Y%m%d%H%M)"
-          git checkout -b $BRANCH_NAME
-          git config --global user.name "mohanmanikanta2299"
-          git config --global user.email "mohanmanikanta2299@users.noreply.github.com"
-          git add metrics.json
-          git commit -m "Update GitHub repository metrics"
-          git push origin $BRANCH_NAME
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{ env.INSTALLATION_TOKEN }}
-
-      - name: Create Pull Request
-        if: env.CHANGED == 'true' || env.CHANGED == '1'
-        id: create_pr
-        uses: actions/github-script@v7
+      - name: Raise a PR and Commit Changes
+        if: env.CHANGED == 'true'
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
-          github-token: ${{ env.INSTALLATION_TOKEN }}
-          script: |
-            const branchName = process.env.BRANCH_NAME;
-            if (!branchName) {
-              throw new Error("BRANCH_NAME environment variable is not set.");
-            }
-              
-            const pr = await github.rest.pulls.create({
-              owner: "mohanmanikanta2299",
-              repo: "dashboard-metrics",
-              title: "Automated Update: Repository Metrics",
-              head: branchName,
-              base: "main",
-              body: "This PR updates `metrics.json` with the latest repository metrics.",
-              maintainer_can_modify: true
-            });
+          token: ${{ steps.app-token.outputs.token }}
+          branch: ${{ env.branch_name }}
+          commit-message: |
+            Update Github Metrics
+          title: GH Metrics file Update
+          delete-branch: true
+          body: |
+            Hi there 👋
 
-            console.log(`PR Created: ${pr.data.html_url}`);
+            This PR was auto-generated as part of the daily workflow run which collects the metrics needed for the Dashboard developed by IP Compliance team.
+            Please verify the PR and merge the changes if there are no concerns/issues.
+
+            Feel free to run the workflow if there are any concerns with the current data collected in this PR.
+
+            Thank You!
