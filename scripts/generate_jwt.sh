@@ -25,6 +25,15 @@ SIGNATURE=$(echo -n "$HEADER.$PAYLOAD" | openssl dgst -sha256 -sign private-key.
 # JWT Token
 JWT="$HEADER.$PAYLOAD.$SIGNATURE"
 
+# Debug: Print JWT Length (do NOT print actual JWT for security reasons)
+echo "JWT Length: ${#JWT}"
+
+# Check if JWT is empty
+if [ -z "$JWT" ]; then
+    echo "Error: JWT is empty!"
+    exit 1
+fi
+
 echo "Generated JWT: $JWT"
 
 INSTALLATION_TOKEN=$(curl -s -X POST \
