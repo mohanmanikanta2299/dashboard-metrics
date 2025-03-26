@@ -22,16 +22,19 @@ jobs:
       - name: Install Dependencies
         run: sudo apt-get install -y jq
 
-      - name: Generate GitHub App JWT (Shell) and Generate Installation Token
+      - name: Debug JWT Script
         env: 
           PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
-        id: generate_jwt
         run: |
+          set -x  # Enable debugging output
           chmod +x scripts/generate_jwt.sh
+          ls -l scripts/generate_jwt.sh  # Check file permissions
+          file scripts/generate_jwt.sh   # Check file type
           printf "%s" "$PRIVATE_KEY" > private-key.pem
           chmod 600 private-key.pem
+          cat private-key.pem | head -5  # Print first 5 lines to check correctness
           TOKEN=$(./scripts/generate_jwt.sh '${{ secrets.GH_APP_ID }}' '${{ secrets.GH_APP_INSTALLATION_ID }}')
-          echo "Generated Token: $TOKEN"  # Debugging, remove later
+          echo "Generated Token: $TOKEN"
           echo "INSTALLATION_TOKEN=$TOKEN" >> $GITHUB_ENV
 
       - name: Set Up Environment Variables
