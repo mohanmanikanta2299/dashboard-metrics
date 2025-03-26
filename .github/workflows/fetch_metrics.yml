@@ -5,9 +5,6 @@ on:
     - cron: '0 10 * * *'  # Runs every day
   workflow_dispatch:  # Allows manual trigger
 
-env:
-  branch_name: metrics/update-metrics
-
 jobs:
   update-metrics:
     runs-on: ubuntu-latest
@@ -37,6 +34,9 @@ jobs:
         run: |
           echo "REPO_FILE=repos.txt" >> $GITHUB_ENV
           echo "OUTPUT_FILE=metrics.json" >> $GITHUB_ENV
+
+      - name: Set Branch Name
+        run: echo "branch_name=metrics/update-metrics-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
   
       - name: Run Metrics Fetch Script
         run: |
@@ -61,7 +61,7 @@ jobs:
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
           token: ${{ steps.app-token.outputs.token }}
-          branch: ${{ env.branch_name }}-$(date +%Y%m%d%H%M%S)
+          branch: ${{ env.branch_name }}
           commit-message: |
             Update Github Metrics
           title: GH Metrics file Update
