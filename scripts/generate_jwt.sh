@@ -7,7 +7,7 @@ GH_APP_INSTALLATION_ID=$2
 # Ensure required parameters are provided
 if [[ -z "$GH_APP_ID" || -z "$GH_APP_INSTALLATION_ID" ]]; then
     echo "Error: Missing required parameters."
-    echo "Usage: $0 <GH_APP_ID> <GH_APP_PRIVATE_KEY>"
+    echo "Usage: $0 <GH_APP_ID> <GH_APP_INSTALLATION_ID>"
     exit 1
 fi
 
@@ -17,7 +17,7 @@ EXPIRATION=$(( $(date +%s) + 600 )) # 10 minutes expiration
 HEADER=$(echo -n '{"alg":"RS256","typ":"JWT"}' | openssl base64 -A | tr -d '=' | tr '/+' '_-')
 
 # JWT Payload
-PAYLOAD=$(echo -n "{\"iat\":$(date +%s),\"exp\":$EXPIRATION,\"iss\":$APP_ID}" | openssl base64 -A | tr -d '=' | tr '/+' '_-')
+PAYLOAD=$(echo -n "{\"iat\":$(date +%s),\"exp\":$EXPIRATION,\"iss\":$GH_APP_ID}" | openssl base64 -A | tr -d '=' | tr '/+' '_-')
 
 # Generate signature
 SIGNATURE=$(echo -n "$HEADER.$PAYLOAD" | openssl dgst -sha256 -sign private-key.pem | openssl base64 -A | tr -d '=' | tr '/+' '_-')
