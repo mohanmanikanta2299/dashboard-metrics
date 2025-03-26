@@ -2,41 +2,39 @@
 set -e
 
 GH_APP_ID=$1
-PRIVATE_KEY=$2
+GH_APP_INSTALLATION_ID=$2
 
 # Ensure required parameters are provided
-if [[ -z "$GH_APP_ID" || -z "$PRIVATE_KEY" ]]; then
+if [[ -z "$GH_APP_ID" || -z "$GH_APP_INSTALLATION_ID" ]]; then
     echo "Error: Missing required parameters."
     echo "Usage: $0 <GH_APP_ID> <GH_APP_PRIVATE_KEY>"
     exit 1
 fi
 
-# Write private key to a temporary file
-PRIVATE_KEY_FILE=$(mktemp)
-echo -e "$PRIVATE_KEY" | sed 's/\\n/\n/g' > "$PRIVATE_KEY_FILE"
-chmod 600 "$PRIVATE_KEY_FILE"  # Secure the key file
+EXPIRATION=$(( $(date +%s) + 600 )) # 10 minutes expiration
 
-HEADER='{"alg":"RS256","typ":"JWT"}'
+# JWT Header
+HEADER=$(echo -n '{"alg":"RS256","typ":"JWT"}' | openssl base64 -A | tr -d '=' | tr '/+' '_-')
 
-# JWT Payload: issued at (iat) and expiration (exp) timestamps
-NOW=$(date +%s)
-EXP=$(($NOW + 600))  # 10 minutes validity
-PAYLOAD="{\"iat\":$NOW,\"exp\":$EXP,\"iss\":$GH_APP_ID}"
+# JWT Payload
+PAYLOAD=$(echo -n "{\"iat\":$(date +%s),\"exp\":$EXPIRATION,\"iss\":$APP_ID}" | openssl base64 -A | tr -d '=' | tr '/+' '_-')
 
-# Encode header and payload
-HEADER_B64=$(echo -n "$HEADER" | openssl base64 -A | tr -d '=' | tr '/+' '_-')
-PAYLOAD_B64=$(echo -n "$PAYLOAD" | openssl base64 -A | tr -d '=' | tr '/+' '_-')
+# Generate signature
+SIGNATURE=$(echo -n "$HEADER.$PAYLOAD" | openssl dgst -sha256 -sign private-key.pem | openssl base64 -A | tr -d '=' | tr '/+' '_-')
 
-# Generate signature using the temporary private key file
-SIGNATURE=$(echo -n "$HEADER_B64.$PAYLOAD_B64" | \
-    openssl dgst -sha256 -sign "$PRIVATE_KEY_FILE" | \
-    openssl base64 -A | tr -d '=' | tr '/+' '_-')
+# JWT Token
+JWT="$HEADER.$PAYLOAD.$SIGNATURE"
 
-# Clean up private key file
-rm -f "$PRIVATE_KEY_FILE"
+echo "Generated JWT: $JWT"
 
-# Final JWT token
-JWT="$HEADER_B64.$PAYLOAD_B64.$SIGNATURE"
+INSTALLATION_TOKEN=$(curl -s -X POST \
+            -H "Authorization: Bearer $JWT" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/app/installations/$GH_APP_INSTALLATION_ID/access_tokens" | jq -r .token)
 
-# Output JWT
-echo "$JWT"
+if [ -z "$INSTALLATION_TOKEN" ] || [ "$INSTALLATION_TOKEN" == "null" ]; then
+    echo "Failed to get installation token"
+    exit 1
+fi
+
+echo "$INSTALLATION_TOKEN"
