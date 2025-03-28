@@ -15,7 +15,7 @@ fetch_metrics() {
     repo=$1
 
     # Fetch repository details (includes open_issues_count)
-    response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+    response=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                      -H "Accept: application/vnd.github.v3+json" \
                      "https://api.github.com/repos/mohanmanikanta2299/$repo")
 
