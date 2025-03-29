@@ -1,5 +1,10 @@
 [
   {
+    "repo": "test2",
+    "open_issues": 0,
+    "open_prs": 0
+  },
+  {
     "repo": "test1",
     "open_issues": 0,
     "open_prs": 0
