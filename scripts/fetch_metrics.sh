@@ -19,7 +19,7 @@ fetch_metrics() {
                      -H "Accept: application/vnd.github.v3+json" \
                      "https://api.github.com/repos/mohanmanikanta2299/$repo")
 
-    echo $response
+    echo "RESPONSE : $response"
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
