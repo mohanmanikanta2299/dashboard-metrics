@@ -40,18 +40,18 @@ jobs:
 
       - name: Check Token Repository Access
         run: |
-          curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+          curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                -H "Accept: application/vnd.github.v3+json" \
                "https://api.github.com/installation/repositories"
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_APP_TOKEN: ${{ steps.app-token.outputs.token }}
   
       - name: Run Metrics Fetch Script
         run: |
           chmod +x scripts/fetch_metrics.sh
           ./scripts/fetch_metrics.sh
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_APP_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Check for Changes
         id: check_changes

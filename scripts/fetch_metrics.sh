@@ -15,12 +15,12 @@ fetch_metrics() {
     repo=$1
 
     # Fetch repository details (includes open_issues_count)
-    response=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+    response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                      -H "Accept: application/vnd.github.v3+json" \
                      "https://api.github.com/repos/mohanmanikanta2299/$repo")
 
     echo $response
-    
+
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
         echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"has_workflows\":false}"
@@ -34,7 +34,7 @@ fetch_metrics() {
     page=1
 
     while :; do
-        pr_response=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+        pr_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
                              "https://api.github.com/repos/mohanmanikanta2299/$repo/pulls?state=open&page=$page&per_page=100")
 
@@ -57,7 +57,7 @@ fetch_metrics() {
     actual_issues=$((open_issues - pr_count))
 
     # Check if .github/workflows contains .yml files
-    workflows_response=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+    workflows_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                 -H "Accept: application/vnd.github.v3+json" \
                                 "https://api.github.com/repos/mohanmanikanta2299/$repo/contents/.github/workflows")
 
