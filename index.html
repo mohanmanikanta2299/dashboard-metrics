@@ -33,6 +33,7 @@
                 <th>Repository</th>
                 <th>Open Issues</th>
                 <th>Open PRs</th>
+                <th>Has Workflows</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -51,6 +52,7 @@
                         <td>${repo.repo}</td>
                         <td>${repo.open_issues}</td>
                         <td>${repo.open_prs}</td>
+                        <td>${repo.has_workflows ? "✅" : "❌"}</td>
                     </tr>`;
                     tableBody.innerHTML += row;
                 });

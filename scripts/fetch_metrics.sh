@@ -21,7 +21,7 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0}"
+        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"has_workflows\":false}"
         return
     fi
 
@@ -32,7 +32,7 @@ fetch_metrics() {
     page=1
 
     while :; do
-        pr_response=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+        pr_response=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
                              "https://api.github.com/repos/mohanmanikanta2299/$repo/pulls?state=open&page=$page&per_page=100")
 
@@ -54,10 +54,16 @@ fetch_metrics() {
     # Subtract PR count from open issues count (actual issues count)
     actual_issues=$((open_issues - pr_count))
 
-    # Print JSON object without formatting
-    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count}"
-}
+    # Check if .github/workflows contains .yml files
+    workflows_response=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+                                -H "Accept: application/vnd.github.v3+json" \
+                                "https://api.github.com/repos/mohanmanikanta2299/$repo/contents/.github/workflows")
 
+    has_workflows=$(echo "$workflows_response" | jq '[.[] | select(.type == "file" and (.name | endswith(".yml") or endswith(".yaml")))] | length > 0')
+
+    # Print JSON object without formatting
+    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"has_workflows\":$has_workflows}"
+}
 
 export -f fetch_metrics  # Export function so it's available in subshells
 
