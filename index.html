@@ -8,19 +8,35 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f8f9fc;
         }
+    
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+    
+        th {
+            background-color: #3f51b5; /* Indigo */
+            color: #ffffff;
+            padding: 10px;
             text-align: left;
         }
-        th {
-            background-color: #f4f4f4;
+    
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #ffffff;
+        }
+    
+        tr:nth-child(even) td {
+            background-color: #f0f4ff;
+        }
+    
+        tr:hover td {
+            background-color: #e3f2fd; /* Light blue on hover */
         }
     </style>
 </head>
@@ -34,6 +50,7 @@
                 <th>Open Issues</th>
                 <th>Open PRs</th>
                 <th>Has Workflows</th>
+                <th>Triggered on Push/PR</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -53,6 +70,7 @@
                         <td>${repo.open_issues}</td>
                         <td>${repo.open_prs}</td>
                         <td>${repo.has_workflows ? "✅" : "❌"}</td>
+                        <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td> <!-- New column value -->
                     </tr>`;
                     tableBody.innerHTML += row;
                 });
