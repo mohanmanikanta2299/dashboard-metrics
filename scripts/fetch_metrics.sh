@@ -65,11 +65,18 @@ fetch_metrics() {
     # Check if the response is an array (i.e., directory exists and contains files)
     if echo "$workflows_response" | jq -e '. | type == "array"' >/dev/null; then
         # Check if any .yml or .yaml workflow files exist
-        has_workflows=$(echo "$workflows_response" | jq '[.[] | select(.type == "file" and (.name | endswith(".yml") or endswith(".yaml")))] | length > 0')
+        has_workflows=$(echo "$workflows_response" | jq '[.[] | select(.type == "file" and (.name | test("\\.ya?ml$"))) ] | length > 0')
 
         if [ "$has_workflows" = true ]; then
-            # Loop through each workflow file and check if it triggers on push or pull_request
-            for url in $(echo "$workflows_response" | jq -r '.[] | select(.type == "file") | select(.name | endswith(".yml") or endswith(".yaml")) | .download_url'); do
+            # Extract URLs safely into a Bash array
+            mapfile -t workflow_urls < <(echo "$workflows_response" | jq -r '
+                .[] 
+                | select(.type == "file") 
+                | select(.name | test("\\.ya?ml$")) 
+                | .download_url
+            ')
+
+            for url in "${workflow_urls[@]}"; do
                 yaml_content=$(curl -s "$url")
 
                 if echo "$yaml_content" | yq -e '
@@ -79,7 +86,7 @@ fetch_metrics() {
                      ($on | type == "array" and ($on[] == "push" or $on[] == "pull_request")) or
                      ($on | type == "object" and (has("push") or has("pull_request")))
                     )
-                ' >/dev/null; then
+                ' >/dev/null 2>&1; then
                     triggered_on_push_or_pr=true
                     break
                 fi
