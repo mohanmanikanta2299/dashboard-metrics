@@ -64,11 +64,9 @@ fetch_metrics() {
 
     # Check if the response is an array (i.e., directory exists and contains files)
     if echo "$workflows_response" | jq -e '. | type == "array"' >/dev/null; then
-        # Check if any .yml or .yaml workflow files exist
         has_workflows=$(echo "$workflows_response" | jq '[.[] | select(.type == "file" and (.name | test("\\.ya?ml$"))) ] | length > 0')
 
         if [ "$has_workflows" = true ]; then
-            # Extract URLs safely into a Bash array
             mapfile -t workflow_urls < <(echo "$workflows_response" | jq -r '
                 .[] 
                 | select(.type == "file") 
