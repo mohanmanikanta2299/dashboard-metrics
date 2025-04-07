@@ -38,6 +38,15 @@ jobs:
       - name: Set Branch Name
         run: echo "branch_name=metrics/update-metrics-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
+      - name: Install jq and yq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+          yq --version
+          jq --version
+        
       - name: Check Token Repository Access
         run: |
           curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \

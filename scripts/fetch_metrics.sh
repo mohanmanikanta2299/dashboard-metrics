@@ -17,11 +17,11 @@ fetch_metrics() {
     # Fetch repository details (includes open_issues_count)
     response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                      -H "Accept: application/vnd.github.v3+json" \
-                     "https://api.github.com/repos/mohanmanikanta2299/$repo")
+                     "https://api.github.com/repos/hashicorp/$repo")
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"has_workflows\":false}"
+        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"has_workflows\":false,\"triggered_on_push_or_pr\":false}"
         return
     fi
 
@@ -34,7 +34,7 @@ fetch_metrics() {
     while :; do
         pr_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
-                             "https://api.github.com/repos/mohanmanikanta2299/$repo/pulls?state=open&page=$page&per_page=100")
+                             "https://api.github.com/repos/hashicorp/$repo/pulls?state=open&page=$page&per_page=100")
 
         count=$(echo "$pr_response" | jq 'if type == "array" then length else 0 end')
 
@@ -54,18 +54,32 @@ fetch_metrics() {
     # Subtract PR count from open issues count (actual issues count)
     actual_issues=$((open_issues - pr_count))
 
-    # Check if .github/workflows contains .yml files
+    # Check for workflow files
     workflows_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                 -H "Accept: application/vnd.github.v3+json" \
-                                "https://api.github.com/repos/mohanmanikanta2299/$repo/contents/.github/workflows")
+                                "https://api.github.com/repos/hashicorp/$repo/contents/.github/workflows")
 
-    has_workflows=$(echo "$workflows_response" | jq '[.[] | select(.type == "file" and (.name | endswith(".yml") or endswith(".yaml")))] | length > 0')
+    has_workflows=false
+    triggered_on_push_or_pr=false
 
-    # Print JSON object without formatting
-    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"has_workflows\":$has_workflows}"
+    if echo "$workflows_response" | jq -e '. | type == "array"' >/dev/null; then
+        has_workflows=$(echo "$workflows_response" | jq '[.[] | select(.type == "file" and (.name | endswith(".yml") or endswith(".yaml")))] | length > 0')
+
+        # Check if any workflow file triggers on push or pull_request
+        for url in $(echo "$workflows_response" | jq -r '.[] | select(.type == "file") | select(.name | endswith(".yml") or endswith(".yaml")) | .download_url'); do
+            yaml_content=$(curl -s "$url")
+            # Check for "on: push" or "on: pull_request"
+            if echo "$yaml_content" | yq 'has("on") and (."on" == "push" or ."on" == "pull_request" or ("push" in ."on" or "pull_request" in ."on"))' | grep -q "true"; then
+                triggered_on_push_or_pr=true
+                break
+            fi
+        done
+    fi
+
+    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"has_workflows\":$has_workflows,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr}"
 }
 
-export -f fetch_metrics  # Export function so it's available in subshells
+export -f fetch_metrics
 
 # Use xargs for parallel execution
 {

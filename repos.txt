@@ -1,2 +1,2 @@
-test3
-test2
+go-getter
+go-slug
