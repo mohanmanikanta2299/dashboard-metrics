@@ -62,18 +62,29 @@ fetch_metrics() {
     has_workflows=false
     triggered_on_push_or_pr=false
 
+    # Check if the response is an array (i.e., directory exists and contains files)
     if echo "$workflows_response" | jq -e '. | type == "array"' >/dev/null; then
+        # Check if any .yml or .yaml workflow files exist
         has_workflows=$(echo "$workflows_response" | jq '[.[] | select(.type == "file" and (.name | endswith(".yml") or endswith(".yaml")))] | length > 0')
 
-        # Check if any workflow file triggers on push or pull_request
-        for url in $(echo "$workflows_response" | jq -r '.[] | select(.type == "file") | select(.name | endswith(".yml") or endswith(".yaml")) | .download_url'); do
-            yaml_content=$(curl -s "$url")
-            # Check for "on: push" or "on: pull_request"
-            if echo "$yaml_content" | yq 'has("on") and (."on" == "push" or ."on" == "pull_request" or ("push" in ."on" or "pull_request" in ."on"))' | grep -q "true"; then
-                triggered_on_push_or_pr=true
-                break
-            fi
-        done
+        if [ "$has_workflows" = true ]; then
+            # Loop through each workflow file and check if it triggers on push or pull_request
+            for url in $(echo "$workflows_response" | jq -r '.[] | select(.type == "file") | select(.name | endswith(".yml") or endswith(".yaml")) | .download_url'); do
+                yaml_content=$(curl -s "$url")
+
+                if echo "$yaml_content" | yq -e '
+                    .on as $on |
+                    ($on == "push" or
+                     $on == "pull_request" or
+                     ($on | type == "array" and ($on[] == "push" or $on[] == "pull_request")) or
+                     ($on | type == "object" and (has("push") or has("pull_request")))
+                    )
+                ' >/dev/null; then
+                    triggered_on_push_or_pr=true
+                    break
+                fi
+            done
+        fi
     fi
 
     echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"has_workflows\":$has_workflows,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr}"
