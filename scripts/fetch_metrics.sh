@@ -21,7 +21,7 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"n/a\"}"
+        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"N/A\"}"
         return
     fi
 
@@ -101,7 +101,7 @@ fetch_metrics() {
 
     release_version=$(echo "$release_response" | jq -r '.tag_name // empty')
     if [[ -z "$release_version" || "$release_version" == "null" ]]; then
-        release_version="n/a"
+        release_version="N/A"
     fi
 
     echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\"}"
