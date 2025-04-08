@@ -21,7 +21,7 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false}"
+        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"n/a\"}"
         return
     fi
 
@@ -94,7 +94,17 @@ fetch_metrics() {
         fi
     fi
 
-    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr}"
+    # Get the latest release version
+    release_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                             -H "Accept: application/vnd.github.v3+json" \
+                             "https://api.github.com/repos/hashicorp/$repo/releases/latest")
+
+    release_version=$(echo "$release_response" | jq -r '.tag_name // empty')
+    if [[ -z "$release_version" || "$release_version" == "null" ]]; then
+        release_version="n/a"
+    fi
+
+    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\"}"
 }
 
 export -f fetch_metrics

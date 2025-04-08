@@ -49,7 +49,8 @@
                 <th>Repository</th>
                 <th>Open Issues</th>
                 <th>Open PRs</th>
-                <th>Triggered on Push/PR</th>
+                <th>CI Enabled</th>
+                <th>Latest Release Version</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -68,7 +69,8 @@
                         <td>${repo.repo}</td>
                         <td>${repo.open_issues}</td>
                         <td>${repo.open_prs}</td>
-                        <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td> <!-- New column value -->
+                        <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
+                        <td>${repo.release_version}</td>
                     </tr>`;
                     tableBody.innerHTML += row;
                 });
