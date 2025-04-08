@@ -49,7 +49,6 @@
                 <th>Repository</th>
                 <th>Open Issues</th>
                 <th>Open PRs</th>
-                <th>Has Workflows</th>
                 <th>Triggered on Push/PR</th>
             </tr>
         </thead>
@@ -69,7 +68,6 @@
                         <td>${repo.repo}</td>
                         <td>${repo.open_issues}</td>
                         <td>${repo.open_prs}</td>
-                        <td>${repo.has_workflows ? "✅" : "❌"}</td>
                         <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td> <!-- New column value -->
                     </tr>`;
                     tableBody.innerHTML += row;

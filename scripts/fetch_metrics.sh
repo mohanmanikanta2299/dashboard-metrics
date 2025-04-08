@@ -21,7 +21,7 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"has_workflows\":false,\"triggered_on_push_or_pr\":false}"
+        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false}"
         return
     fi
 
@@ -94,7 +94,7 @@ fetch_metrics() {
         fi
     fi
 
-    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"has_workflows\":$has_workflows,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr}"
+    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr}"
 }
 
 export -f fetch_metrics
