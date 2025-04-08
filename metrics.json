@@ -1,26 +1,331 @@
 [
   {
+    "repo": "eventlogger",
+    "open_issues": 0,
+    "open_prs": 0,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
     "repo": "dawdle",
     "open_issues": 0,
     "open_prs": 0,
-    "triggered_on_push_or_pr": false
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
   },
   {
-    "repo": "go-slug",
-    "open_issues": 5,
+    "repo": "go-checkpoint",
+    "open_issues": 2,
+    "open_prs": 1,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "errwrap",
+    "open_issues": 4,
+    "open_prs": 3,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-argmapper",
+    "open_issues": 2,
     "open_prs": 6,
-    "triggered_on_push_or_pr": true
+    "triggered_on_push_or_pr": true,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-cleanhttp",
+    "open_issues": 2,
+    "open_prs": 2,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.5.2"
+  },
+  {
+    "repo": "cli",
+    "open_issues": 0,
+    "open_prs": 4,
+    "triggered_on_push_or_pr": true,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "dbassert",
+    "open_issues": 0,
+    "open_prs": 1,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-bexpr",
+    "open_issues": 8,
+    "open_prs": 9,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.1.14"
+  },
+  {
+    "repo": "copywrite",
+    "open_issues": 11,
+    "open_prs": 20,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.22.0"
+  },
+  {
+    "repo": "go-connlimit",
+    "open_issues": 1,
+    "open_prs": 0,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.3.1"
+  },
+  {
+    "repo": "go-hclog",
+    "open_issues": 2,
+    "open_prs": 7,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v1.6.3"
+  },
+  {
+    "repo": "go-msgpack",
+    "open_issues": 0,
+    "open_prs": 0,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.1.3"
+  },
+  {
+    "repo": "go-immutable-radix",
+    "open_issues": 5,
+    "open_prs": 9,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.1.0"
+  },
+  {
+    "repo": "go-raftchunking",
+    "open_issues": 0,
+    "open_prs": 1,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.7.1"
+  },
+  {
+    "repo": "go-discover",
+    "open_issues": 43,
+    "open_prs": 43,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
   },
   {
     "repo": "go-memdb",
     "open_issues": 34,
     "open_prs": 11,
-    "triggered_on_push_or_pr": true
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.3.5"
+  },
+  {
+    "repo": "go-multierror",
+    "open_issues": 13,
+    "open_prs": 17,
+    "triggered_on_push_or_pr": true,
+    "release_version": "N/A"
   },
   {
     "repo": "go-getter",
     "open_issues": 135,
     "open_prs": 42,
-    "triggered_on_push_or_pr": true
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.7.8"
+  },
+  {
+    "repo": "go-rate",
+    "open_issues": 0,
+    "open_prs": 0,
+    "triggered_on_push_or_pr": true,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-plugin",
+    "open_issues": 62,
+    "open_prs": 26,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v1.6.3"
+  },
+  {
+    "repo": "go-rootcerts",
+    "open_issues": 9,
+    "open_prs": 4,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-safetemp",
+    "open_issues": 0,
+    "open_prs": 0,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-uuid",
+    "open_issues": 0,
+    "open_prs": 1,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-syslog",
+    "open_issues": 0,
+    "open_prs": 3,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-sockaddr",
+    "open_issues": 13,
+    "open_prs": 7,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v1.0.7"
+  },
+  {
+    "repo": "go-slug",
+    "open_issues": 5,
+    "open_prs": 6,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.16.5"
+  },
+  {
+    "repo": "go-retryablehttp",
+    "open_issues": 49,
+    "open_prs": 22,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "go-version",
+    "open_issues": 16,
+    "open_prs": 22,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.7.0"
+  },
+  {
+    "repo": "golang-lru",
+    "open_issues": 30,
+    "open_prs": 18,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v2.0.7"
+  },
+  {
+    "repo": "jsonapi",
+    "open_issues": 0,
+    "open_prs": 2,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v1.5.0"
+  },
+  {
+    "repo": "hil",
+    "open_issues": 6,
+    "open_prs": 7,
+    "triggered_on_push_or_pr": true,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "memberlist",
+    "open_issues": 74,
+    "open_prs": 30,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.5.3"
+  },
+  {
+    "repo": "net-rpc-msgpackrpc",
+    "open_issues": 0,
+    "open_prs": 0,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v2.0.1"
+  },
+  {
+    "repo": "hcl",
+    "open_issues": 170,
+    "open_prs": 57,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v2.23.0"
+  },
+  {
+    "repo": "mdns",
+    "open_issues": 22,
+    "open_prs": 18,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v1.0.6"
+  },
+  {
+    "repo": "raft",
+    "open_issues": 31,
+    "open_prs": 13,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v1.7.3"
+  },
+  {
+    "repo": "raft-autopilot",
+    "open_issues": 4,
+    "open_prs": 8,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.3.0"
+  },
+  {
+    "repo": "raft-boltdb",
+    "open_issues": 6,
+    "open_prs": 3,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v2.3.1"
+  },
+  {
+    "repo": "vic",
+    "open_issues": 0,
+    "open_prs": 1,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "raft-wal",
+    "open_issues": 2,
+    "open_prs": 4,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.4.2"
+  },
+  {
+    "repo": "vagrant-plugin-sdk",
+    "open_issues": 0,
+    "open_prs": 5,
+    "triggered_on_push_or_pr": false,
+    "release_version": "N/A"
+  },
+  {
+    "repo": "yamux",
+    "open_issues": 13,
+    "open_prs": 12,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.1.2"
+  },
+  {
+    "repo": "go-metrics",
+    "open_issues": 32,
+    "open_prs": 26,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.5.4"
+  },
+  {
+    "repo": "raft-snapshot",
+    "open_issues": 0,
+    "open_prs": 5,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v1.0.2"
+  },
+  {
+    "repo": "serf",
+    "open_issues": 96,
+    "open_prs": 37,
+    "triggered_on_push_or_pr": false,
+    "release_version": "v0.10.2"
+  },
+  {
+    "repo": "mql",
+    "open_issues": 1,
+    "open_prs": 2,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.1.4"
   }
 ]
