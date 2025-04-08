@@ -1,5 +1,12 @@
 [
   {
+    "repo": "dawdle",
+    "open_issues": 0,
+    "open_prs": 0,
+    "has_workflows": false,
+    "triggered_on_push_or_pr": false
+  },
+  {
     "repo": "go-slug",
     "open_issues": 5,
     "open_prs": 6,
