@@ -3,24 +3,28 @@
     "repo": "dawdle",
     "open_issues": 0,
     "open_prs": 0,
-    "triggered_on_push_or_pr": false
+    "triggered_on_push_or_pr": false,
+    "release_version": "n/a"
   },
   {
     "repo": "go-slug",
     "open_issues": 5,
     "open_prs": 6,
-    "triggered_on_push_or_pr": true
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.16.5"
   },
   {
     "repo": "go-memdb",
     "open_issues": 34,
     "open_prs": 11,
-    "triggered_on_push_or_pr": true
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.3.5"
   },
   {
     "repo": "go-getter",
     "open_issues": 135,
     "open_prs": 42,
-    "triggered_on_push_or_pr": true
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.7.8"
   }
 ]
