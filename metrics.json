@@ -3,21 +3,24 @@
     "repo": "dawdle",
     "open_issues": 0,
     "open_prs": 0,
-    "has_workflows": false,
     "triggered_on_push_or_pr": false
   },
   {
     "repo": "go-slug",
     "open_issues": 5,
     "open_prs": 6,
-    "has_workflows": true,
+    "triggered_on_push_or_pr": true
+  },
+  {
+    "repo": "go-memdb",
+    "open_issues": 34,
+    "open_prs": 11,
     "triggered_on_push_or_pr": true
   },
   {
     "repo": "go-getter",
     "open_issues": 135,
     "open_prs": 42,
-    "has_workflows": true,
     "triggered_on_push_or_pr": true
   }
 ]
