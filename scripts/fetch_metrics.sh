@@ -107,20 +107,16 @@ fetch_metrics() {
 
     release_version=$(echo "$release_response" | jq -r '.tag_name // empty')
 
-    # If no release found, try to fetch the latest tag
-    if [[ -z "$release_response" || "$release_version" == "null" ]]; then
+    if [[ -z "$release_version" || "$release_version" == "null" ]]; then
         tag=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                     -H "Accept: application/vnd.github.v3+json" \
                     "https://api.github.com/repos/hashicorp/$repo/tags" \
                     | jq -r '.[0].name // empty')
+        release_version="--"
     fi
 
     if [[ -z "$tag" || "$tag" == "null" ]]; then
         tag="--"
-    fi
-
-    if [[ -z "$release_version" || "$release_version" == "null" ]]; then
-        release_version="--"
     fi
 
     echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\"}"
