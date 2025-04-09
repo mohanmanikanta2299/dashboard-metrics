@@ -26,7 +26,7 @@ fetch_metrics() {
     fi
 
     forked_from="--"
-    is_fork=$(echo "$response" | jq '.fork // false')
+    is_fork=$(echo "$response" | jq -r '.fork // false')
     if [[ "$is_fork" == "true" ]]; then
         forked_from=$(echo "$response" | jq -r '.parent.full_name // "unknown"')
     fi
