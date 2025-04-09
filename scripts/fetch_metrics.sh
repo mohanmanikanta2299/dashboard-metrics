@@ -21,8 +21,14 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\"}"
+        echo "{\"repo\":\"$repo\",\"forked_from\":\"--\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\"}"
         return
+    fi
+
+    forked_from="--"
+    is_fork=$(echo "$response" | jq '.fork // false')
+    if [[ "$is_fork" == "true" ]]; then
+        forked_from=$(echo "$response" | jq -r '.parent.full_name // "unknown"')
     fi
 
     open_issues=$(echo "$response" | jq '.open_issues_count // 0')
@@ -119,7 +125,7 @@ fetch_metrics() {
         tag="--"
     fi
 
-    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\"}"
+    echo "{\"repo\":$repo,\"forked_from\":$forked_from,\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":$release_version,\"tag\":$tag}"
 }
 
 export -f fetch_metrics

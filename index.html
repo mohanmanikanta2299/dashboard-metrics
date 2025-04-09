@@ -47,6 +47,7 @@
         <thead>
             <tr>
                 <th>Repository</th>
+                <th>Forked From</th>
                 <th>Open Issues</th>
                 <th>Open PRs</th>
                 <th>CI Enabled</th>
@@ -68,6 +69,7 @@
                 data.forEach(repo => {
                     const row = `<tr>
                         <td>${repo.repo}</td>
+                        <td>${repo.forked_from}</td>
                         <td>${repo.open_issues}</td>
                         <td>${repo.open_prs}</td>
                         <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
