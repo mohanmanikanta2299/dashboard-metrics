@@ -21,7 +21,7 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"N/A\"}"
+        echo "{\"repo\":\"$repo\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\"}"
         return
     fi
 
@@ -106,11 +106,24 @@ fetch_metrics() {
                              "https://api.github.com/repos/hashicorp/$repo/releases/latest")
 
     release_version=$(echo "$release_response" | jq -r '.tag_name // empty')
-    if [[ -z "$release_version" || "$release_version" == "null" ]]; then
-        release_version="N/A"
+
+    # If no release found, try to fetch the latest tag
+    if [[ -z "$release_response" || "$release_version" == "null" ]]; then
+        tag=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                    -H "Accept: application/vnd.github.v3+json" \
+                    "https://api.github.com/repos/hashicorp/$repo/tags" \
+                    | jq -r '.[0].name // empty')
     fi
 
-    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\"}"
+    if [[ -z "$tag" || "$tag" == "null" ]]; then
+        tag="--"
+    fi
+
+    if [[ -z "$release_version" || "$release_version" == "null" ]]; then
+        release_version="--"
+    fi
+
+    echo "{\"repo\":\"$repo\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\"}"
 }
 
 export -f fetch_metrics

@@ -51,6 +51,7 @@
                 <th>Open PRs</th>
                 <th>CI Enabled</th>
                 <th>Latest Release Version</th>
+                <th>Latest Tag</tr>
             </tr>
         </thead>
         <tbody></tbody>
@@ -71,6 +72,7 @@
                         <td>${repo.open_prs}</td>
                         <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
                         <td>${repo.release_version}</td>
+                        <td>${repo.tag}</td>
                     </tr>`;
                     tableBody.innerHTML += row;
                 });
