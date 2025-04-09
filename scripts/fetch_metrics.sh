@@ -80,13 +80,19 @@ fetch_metrics() {
 
                 # Check if the workflow triggers on push or pull_request
                 if echo "$yaml_content" | yq eval -e '
-                  .on as $on |
-                  ($on == "push" or
-                   $on == "pull_request" or
-                   ($on | tag == "!!seq" and ($on[] == "push" or $on[] == "pull_request")) or
-                   ($on | tag == "!!map" and (has("push") or has("pull_request")))
-                  )
+                 (
+                    (.on == "push") or
+                    (.on == "pull_request") or
+                    ( (.on | type == "!!seq") and (.on[] == "push" or .on[] == "pull_request") ) or
+                    ( (.on | type == "!!map") and (has("push") or has("pull_request")) )
+                 )
                 ' - >/dev/null 2>&1; then
+                    triggered_on_push_or_pr=true
+                    break
+                fi
+
+                if echo "$yaml_content" | grep -E '^\s*on:\s*$' >/dev/null || \
+                   echo "$yaml_content" | grep -E '^\s*on:\s*(push|pull_request|\[.*(push|pull_request).*\])' >/dev/null; then
                     triggered_on_push_or_pr=true
                     break
                 fi
