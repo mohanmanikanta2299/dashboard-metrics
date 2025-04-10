@@ -181,3 +181,11 @@ body.dark th.desc::after {
   text-decoration: underline;
   color: #222;
 }
+
+body.dark .footer a {
+  color: #a78bfa;
+}
+
+body.dark .footer a:hover {
+  color: #c4b5fd;
+}
