@@ -126,7 +126,7 @@ fetch_metrics() {
         tag="--"
     fi
 
-    echo "{\"repo\":$repo,\"forked_from\":$forked_from,\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":$release_version,\"tag\":$tag}"
+    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\"}"
 }
 
 export -f fetch_metrics
