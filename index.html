@@ -3,46 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GitHub Repo Metrics</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
+  <title>GitHub Repository Metrics</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <div class="top-bar">
-      <h1>GitHub Repository Metrics</h1>
-      <div class="controls">
-        <button id="download-csv">⬇️ Download CSV</button>
-        <label class="theme-switch">
-          <input type="checkbox" id="theme-toggle">
-          <span class="slider"></span>
-        </label>
-      </div>
-    </div>
-  </header>
 
-  <main>
-    <table id="repoTable">
-      <thead>
-        <tr>
-          <th data-column="repo">Repository</th>
-          <th data-column="forked_from">Forked From</th>
-          <th data-column="open_issues">Open Issues</th>
-          <th data-column="open_prs">Open PRs</th>
-          <th data-column="triggered_on_push_or_pr">CI Enabled</th>
-          <th data-column="release_version">Latest Release Version</th>
-          <th data-column="tag">Latest Tag</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </main>
+  <h2>GitHub Repository Metrics</h2>
 
-  <footer>
-    <p>Made with ❤️ using GitHub APIs & HashiCorp vibes</p>
-    <p><a href="https://github.com/mohanmanikanta2299/dashboard-metrics" target="_blank">View Source on GitHub ↗</a></p>
-  </footer>
+  <table id="repoTable">
+    <thead>
+      <tr>
+        <th>Repository</th>
+        <th>Forked From</th>
+        <th>Open Issues</th>
+        <th>Open PRs</th>
+        <th>CI Enabled</th>
+        <th>Latest Release</th>
+        <th>Latest Tag</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-  <script src="script.js"></script>
+  <script>
+    async function loadMetrics() {
+      try {
+        const response = await fetch(`metrics.json?t=${Date.now()}`);
+        const repos = await response.json();
+        const tbody = document.querySelector("#repoTable tbody");
+        tbody.innerHTML = "";
+
+        repos.forEach(repo => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${repo.repo}</td>
+            <td>${repo.forked_from}</td>
+            <td>${repo.open_issues}</td>
+            <td>${repo.open_prs}</td>
+            <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
+            <td>${repo.release_version}</td>
+            <td>${repo.tag}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Failed to load metrics.json:", error);
+      }
+    }
+
+    loadMetrics();
+  </script>
+
 </body>
 </html>
