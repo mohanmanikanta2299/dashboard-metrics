@@ -1,6 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
     loadMetrics();
+  
     document.getElementById("download-csv").addEventListener("click", downloadCSV);
+    document.getElementById("theme-toggle").addEventListener("change", toggleTheme);
+  
+    // Load saved theme preference
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+      document.getElementById("theme-toggle").checked = true;
+    }
   });
   
   let currentSort = { column: null, order: 'asc' };
@@ -33,10 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
       tbody.appendChild(row);
     });
   
-    addSorting(data);
+    setupSorting(data);
   }
   
-  function addSorting(data) {
+  function setupSorting(data) {
     const headers = document.querySelectorAll("th");
     headers.forEach(header => {
       const column = header.getAttribute("data-column");
@@ -47,15 +55,13 @@ document.addEventListener("DOMContentLoaded", () => {
         headers.forEach(h => h.classList.remove('asc', 'desc'));
         header.classList.add(newOrder);
   
-        const sortedData = [...data].sort((a, b) => {
-          const valA = a[column] || '';
-          const valB = b[column] || '';
-          return newOrder === 'asc'
-            ? valA.toString().localeCompare(valB.toString())
-            : valB.toString().localeCompare(valA.toString());
+        const sorted = [...data].sort((a, b) => {
+          const aVal = a[column]?.toString().toLowerCase() || '';
+          const bVal = b[column]?.toString().toLowerCase() || '';
+          return newOrder === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
         });
   
-        renderTable(sortedData);
+        renderTable(sorted);
       };
     });
   }
@@ -68,12 +74,15 @@ document.addEventListener("DOMContentLoaded", () => {
     ).join("\n");
   
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-  
     const link = document.createElement("a");
-    link.href = url;
+    link.href = URL.createObjectURL(blob);
     link.setAttribute("download", "metrics.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+  
+  function toggleTheme() {
+    const isDark = document.body.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
   }
