@@ -25,10 +25,11 @@ fetch_metrics() {
         return
     fi
 
+    # Check id repo is a fork
+    is_fork=$(echo "$response" | jq '.fork // false')
     forked_from="--"
-    is_fork=$(echo "$response" | jq -r '.fork // false')
     if [[ "$is_fork" == "true" ]]; then
-        forked_from=$(echo "$response" | jq -r '.parent.full_name // "unknown"')
+        forked_from=$(echo "$response" | jq -r '.parent.full_name // "--"')
     fi
 
     open_issues=$(echo "$response" | jq '.open_issues_count // 0')
