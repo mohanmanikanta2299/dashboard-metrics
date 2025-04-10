@@ -5,46 +5,37 @@ body {
     color: #333;
   }
   
-  h2 {
+h2 {
     color: #3f51b5;
     font-size: 1.8rem;
     margin-bottom: 20px;
   }
   
-  table {
+table {
     width: 100%;
     border-collapse: collapse;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
   }
   
-  th {
+th {
     background-color: #3f51b5;
     color: #ffffff;
     padding: 12px;
     text-align: left;
   }
   
-  td {
+td {
     padding: 12px;
     border: 1px solid #ddd;
     background-color: #fff;
     vertical-align: top;
   }
   
-  tr:nth-child(even) td {
+tr:nth-child(even) td {
     background-color: #f0f4ff;
   }
   
-  tr:hover td {
+tr:hover td {
     background-color: #e3f2fd;
-  }
-  
-  .release-col {
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-    vertical-align: middle;
   }
