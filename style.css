@@ -1,41 +1,128 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f8f9fc;
-    color: #333;
-  }
-  
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background-color: #f4f6fa;
+  color: #333;
+  margin: 40px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+  transition: background 0.3s, color 0.3s;
+}
+
 h2 {
-    color: #3f51b5;
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-  }
-  
+  color: #2c3e50;
+  font-size: 2rem;
+  text-align: center;
+}
+
+/* Buttons */
+.controls {
+  text-align: right;
+  margin-bottom: 12px;
+}
+
+.controls button {
+  background-color: #3f51b5;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  margin-left: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.controls button:hover {
+  background-color: #303f9f;
+}
+
+/* Table */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-  }
-  
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+th, td {
+  padding: 16px;
+  text-align: left;
+  font-size: 15px;
+  cursor: default;
+}
+
 th {
-    background-color: #3f51b5;
-    color: #ffffff;
-    padding: 12px;
-    text-align: left;
-  }
-  
+  background: linear-gradient(to right, #3f51b5, #5c6bc0);
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  user-select: none;
+}
+
 td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    vertical-align: top;
-  }
-  
+  background-color: #ffffff;
+  border-bottom: 1px solid #ecf0f1;
+}
+
 tr:nth-child(even) td {
-    background-color: #f0f4ff;
-  }
-  
+  background-color: #f9fbff;
+}
+
 tr:hover td {
-    background-color: #e3f2fd;
-  }
+  background-color: #e8f0fe;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.release-col {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: monospace;
+}
+
+td.release-col:hover {
+  background-color: #ddeeff;
+  cursor: help;
+}
+
+/* Dark Mode */
+body.dark {
+  background-color: #1e1e2f;
+  color: #e0e0e0;
+}
+
+body.dark h2 {
+  color: #f2f2f2;
+}
+
+body.dark table {
+  background-color: #2a2a3f;
+}
+
+body.dark th {
+  background: linear-gradient(to right, #5c6bc0, #7986cb);
+}
+
+body.dark td {
+  background-color: #33334d;
+  border-color: #444;
+}
+
+body.dark tr:nth-child(even) td {
+  background-color: #2e2e40;
+}
+
+body.dark tr:hover td {
+  background-color: #444466;
+}
+
+body.dark .controls button {
+  background-color: #5c6bc0;
+}
+
+body.dark .controls button:hover {
+  background-color: #7986cb;
+}

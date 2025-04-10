@@ -3,39 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GitHub Repository Metrics</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>GitHub Repo Metrics</title>
+  <link rel="stylesheet" href="style.css?v=2"/>
 </head>
 <body>
 
   <h2>GitHub Repository Metrics</h2>
+  
+  <div class="controls">
+    <button id="darkToggle">🌙 Toggle Dark Mode</button>
+    <button id="downloadCSV">⬇️ Download CSV</button>
+  </div>
 
   <table id="repoTable">
     <thead>
       <tr>
-        <th>Repository</th>
-        <th>Forked From</th>
-        <th>Open Issues</th>
-        <th>Open PRs</th>
-        <th>CI Enabled</th>
-        <th>Latest Release</th>
-        <th>Latest Tag</th>
+        <th data-key="repo">Repository</th>
+        <th data-key="forked_from">Forked From</th>
+        <th data-key="open_issues">Open Issues</th>
+        <th data-key="open_prs">Open PRs</th>
+        <th data-key="triggered_on_push_or_pr">CI Enabled</th>
+        <th data-key="release_version">Latest Release Version</th>
+        <th data-key="tag">Latest Tag</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <script>
+    let metricsData = [];
+
     async function loadMetrics() {
       try {
         const response = await fetch(`metrics.json?t=${Date.now()}`);
-        const repos = await response.json();
-        const tbody = document.querySelector("#repoTable tbody");
-        tbody.innerHTML = "";
+        metricsData = await response.json();
+        renderTable(metricsData);
+      } catch (error) {
+        console.error("Error loading metrics:", error);
+      }
+    }
 
-        repos.forEach(repo => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
+    function renderTable(data) {
+      const tableBody = document.querySelector("#repoTable tbody");
+      tableBody.innerHTML = "";
+      data.forEach(repo => {
+        const row = `
+          <tr>
             <td>${repo.repo}</td>
             <td>${repo.forked_from}</td>
             <td>${repo.open_issues}</td>
@@ -43,13 +56,45 @@
             <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
             <td>${repo.release_version}</td>
             <td>${repo.tag}</td>
-          `;
-          tbody.appendChild(row);
-        });
-      } catch (error) {
-        console.error("Failed to load metrics.json:", error);
-      }
+          </tr>`;
+        tableBody.innerHTML += row;
+      });
     }
+
+    function sortByColumn(key) {
+      let sorted = [...metricsData];
+      const isNumber = typeof sorted[0][key] === "number";
+      sorted.sort((a, b) => {
+        const valA = a[key] ?? "";
+        const valB = b[key] ?? "";
+        return isNumber ? valA - valB : valA.localeCompare(valB);
+      });
+      renderTable(sorted);
+    }
+
+    function downloadCSV() {
+      let csv = "Repository,Forked From,Open Issues,Open PRs,CI Enabled,Latest Release Version,Latest Tag\n";
+      metricsData.forEach(repo => {
+        csv += `"${repo.repo}","${repo.forked_from || "-"}",${repo.open_issues},${repo.open_prs},${repo.triggered_on_push_or_pr ? "Yes" : "No"},"${repo.release_version || "-"}","${repo.tag || "-"}"\n`;
+      });
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "repo_metrics.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.querySelectorAll("th").forEach(th => {
+      th.addEventListener("click", () => sortByColumn(th.dataset.key));
+    });
+
+    document.getElementById("darkToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
+
+    document.getElementById("downloadCSV").addEventListener("click", downloadCSV);
 
     loadMetrics();
   </script>
