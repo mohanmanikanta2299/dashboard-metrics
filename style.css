@@ -9,12 +9,23 @@ body {
 }
 
 h2 {
+  font-size: 2.5rem;
   color: #2c3e50;
-  font-size: 2rem;
   text-align: center;
+  position: relative;
+  margin-bottom: 32px;
 }
 
-/* Buttons */
+h2::after {
+  content: "";
+  display: block;
+  margin: 8px auto 0;
+  width: 100px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #3f51b5, #7986cb);
+}
+
 .controls {
   text-align: right;
   margin-bottom: 12px;
@@ -36,7 +47,6 @@ h2 {
   background-color: #303f9f;
 }
 
-/* Table */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -59,6 +69,8 @@ th {
   font-weight: 600;
   text-transform: uppercase;
   user-select: none;
+  position: relative;
+  cursor: pointer;
 }
 
 td {
@@ -75,17 +87,23 @@ tr:hover td {
   transition: background-color 0.2s ease-in-out;
 }
 
-.release-col {
-  max-width: 180px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: monospace;
+/* Sort indicators */
+th.asc::after,
+th.desc::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
 }
 
-td.release-col:hover {
-  background-color: #ddeeff;
-  cursor: help;
+th.asc::after {
+  border-bottom-color: white;
+}
+
+th.desc::after {
+  border-top-color: white;
 }
 
 /* Dark Mode */
@@ -125,4 +143,12 @@ body.dark .controls button {
 
 body.dark .controls button:hover {
   background-color: #7986cb;
+}
+
+body.dark th.asc::after {
+  border-bottom-color: #fff;
+}
+
+body.dark th.desc::after {
+  border-top-color: #fff;
 }

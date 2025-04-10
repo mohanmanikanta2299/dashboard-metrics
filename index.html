@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GitHub Repo Metrics</title>
-  <link rel="stylesheet" href="style.css?v=2"/>
+  <link rel="stylesheet" href="style.css?v=3"/>
 </head>
 <body>
 
   <h2>GitHub Repository Metrics</h2>
-  
+
   <div class="controls">
     <button id="darkToggle">🌙 Toggle Dark Mode</button>
     <button id="downloadCSV">⬇️ Download CSV</button>
@@ -30,74 +30,6 @@
     <tbody></tbody>
   </table>
 
-  <script>
-    let metricsData = [];
-
-    async function loadMetrics() {
-      try {
-        const response = await fetch(`metrics.json?t=${Date.now()}`);
-        metricsData = await response.json();
-        renderTable(metricsData);
-      } catch (error) {
-        console.error("Error loading metrics:", error);
-      }
-    }
-
-    function renderTable(data) {
-      const tableBody = document.querySelector("#repoTable tbody");
-      tableBody.innerHTML = "";
-      data.forEach(repo => {
-        const row = `
-          <tr>
-            <td>${repo.repo}</td>
-            <td>${repo.forked_from}</td>
-            <td>${repo.open_issues}</td>
-            <td>${repo.open_prs}</td>
-            <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
-            <td>${repo.release_version}</td>
-            <td>${repo.tag}</td>
-          </tr>`;
-        tableBody.innerHTML += row;
-      });
-    }
-
-    function sortByColumn(key) {
-      let sorted = [...metricsData];
-      const isNumber = typeof sorted[0][key] === "number";
-      sorted.sort((a, b) => {
-        const valA = a[key] ?? "";
-        const valB = b[key] ?? "";
-        return isNumber ? valA - valB : valA.localeCompare(valB);
-      });
-      renderTable(sorted);
-    }
-
-    function downloadCSV() {
-      let csv = "Repository,Forked From,Open Issues,Open PRs,CI Enabled,Latest Release Version,Latest Tag\n";
-      metricsData.forEach(repo => {
-        csv += `"${repo.repo}","${repo.forked_from || "-"}",${repo.open_issues},${repo.open_prs},${repo.triggered_on_push_or_pr ? "Yes" : "No"},"${repo.release_version || "-"}","${repo.tag || "-"}"\n`;
-      });
-      const blob = new Blob([csv], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "repo_metrics.csv";
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-
-    document.querySelectorAll("th").forEach(th => {
-      th.addEventListener("click", () => sortByColumn(th.dataset.key));
-    });
-
-    document.getElementById("darkToggle").addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-    });
-
-    document.getElementById("downloadCSV").addEventListener("click", downloadCSV);
-
-    loadMetrics();
-  </script>
-
+  <script src="script.js?v=3"></script>
 </body>
 </html>
