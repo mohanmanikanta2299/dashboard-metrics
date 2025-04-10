@@ -1,95 +1,79 @@
-let metricsData = [];
-let sortKey = "";
-let sortDirection = 1;
-
-async function loadMetrics() {
-  try {
-    const response = await fetch(`metrics.json?t=${Date.now()}`);
-    metricsData = await response.json();
-    renderTable(metricsData);
-  } catch (error) {
-    console.error("Error loading metrics:", error);
+document.addEventListener("DOMContentLoaded", () => {
+    loadMetrics();
+    document.getElementById("download-csv").addEventListener("click", downloadCSV);
+  });
+  
+  let currentSort = { column: null, order: 'asc' };
+  
+  async function loadMetrics() {
+    try {
+      const response = await fetch(`metrics.json?t=${new Date().getTime()}`);
+      const data = await response.json();
+      renderTable(data);
+    } catch (err) {
+      console.error("Error loading metrics:", err);
+    }
   }
-}
-
-function renderTable(data) {
-  const tableBody = document.querySelector("#repoTable tbody");
-  tableBody.innerHTML = "";
-
-  data.forEach(repo => {
-    const row = `
-      <tr>
+  
+  function renderTable(data) {
+    const tbody = document.querySelector("#repoTable tbody");
+    tbody.innerHTML = "";
+  
+    data.forEach(repo => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
         <td>${repo.repo}</td>
-        <td>${repo.forked_from || "-"}</td>
+        <td>${repo.forked_from}</td>
         <td>${repo.open_issues}</td>
         <td>${repo.open_prs}</td>
         <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
         <td>${repo.release_version}</td>
-        <td>${repo.tag || "-"}</td>
-      </tr>`;
-    tableBody.innerHTML += row;
-  });
-}
-
-function sortByColumn(key) {
-  if (sortKey === key) {
-    sortDirection *= -1;
-  } else {
-    sortKey = key;
-    sortDirection = 1;
+        <td>${repo.tag}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  
+    addSorting(data);
   }
-
-  const sorted = [...metricsData].sort((a, b) => {
-    let valA = a[key] ?? "";
-    let valB = b[key] ?? "";
-
-    const isNumber = typeof valA === "number" && typeof valB === "number";
-    if (!isNumber) {
-      valA = valA.toString().toLowerCase();
-      valB = valB.toString().toLowerCase();
-    }
-
-    return sortDirection * (valA > valB ? 1 : valA < valB ? -1 : 0);
-  });
-
-  renderTable(sorted);
-  updateSortIndicators();
-}
-
-function updateSortIndicators() {
-  document.querySelectorAll("th").forEach(th => {
-    const key = th.dataset.key;
-    th.classList.remove("asc", "desc");
-    if (key === sortKey) {
-      th.classList.add(sortDirection === 1 ? "asc" : "desc");
-    }
-  });
-}
-
-function downloadCSV() {
-  let csv = "Repository,Forked From,Open Issues,Open PRs,CI Enabled,Latest Release Version,Latest Tag\n";
-  metricsData.forEach(repo => {
-    csv += `"${repo.repo}","${repo.forked_from || "-"}",${repo.open_issues},${repo.open_prs},${repo.triggered_on_push_or_pr ? "Yes" : "No"},"${repo.release_version || "-"}","${repo.tag || "-"}"\n`;
-  });
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "repo_metrics.csv";
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadMetrics();
-
-  document.querySelectorAll("th").forEach(th => {
-    th.addEventListener("click", () => sortByColumn(th.dataset.key));
-  });
-
-  document.getElementById("darkToggle").addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-  });
-
-  document.getElementById("downloadCSV").addEventListener("click", downloadCSV);
-});
+  
+  function addSorting(data) {
+    const headers = document.querySelectorAll("th");
+    headers.forEach(header => {
+      const column = header.getAttribute("data-column");
+      header.onclick = () => {
+        const newOrder = (currentSort.column === column && currentSort.order === 'asc') ? 'desc' : 'asc';
+        currentSort = { column, order: newOrder };
+  
+        headers.forEach(h => h.classList.remove('asc', 'desc'));
+        header.classList.add(newOrder);
+  
+        const sortedData = [...data].sort((a, b) => {
+          const valA = a[column] || '';
+          const valB = b[column] || '';
+          return newOrder === 'asc'
+            ? valA.toString().localeCompare(valB.toString())
+            : valB.toString().localeCompare(valA.toString());
+        });
+  
+        renderTable(sortedData);
+      };
+    });
+  }
+  
+  function downloadCSV() {
+    const rows = Array.from(document.querySelectorAll("table tr"));
+    const csv = rows.map(row =>
+      Array.from(row.querySelectorAll("th, td"))
+        .map(cell => `"${cell.textContent.trim()}"`).join(",")
+    ).join("\n");
+  
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+  
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "metrics.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }

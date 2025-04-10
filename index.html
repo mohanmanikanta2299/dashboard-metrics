@@ -2,42 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GitHub Repo Metrics</title>
-  <link rel="stylesheet" href="style.css?v=3"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <header>
+    <h1>GitHub Repository Metrics</h1>
+    <div class="controls">
+      <button id="download-csv">⬇️ Download CSV</button>
+    </div>
+  </header>
 
-  <h2>GitHub Repository Metrics</h2>
+  <main>
+    <table id="repoTable">
+      <thead>
+        <tr>
+          <th data-column="repo">Repository</th>
+          <th data-column="forked_from">Forked From</th>
+          <th data-column="open_issues">Open Issues</th>
+          <th data-column="open_prs">Open PRs</th>
+          <th data-column="triggered_on_push_or_pr">CI Enabled</th>
+          <th data-column="release_version">Latest Release Version</th>
+          <th data-column="tag">Latest Tag</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
 
-  <div class="controls">
-    <button id="darkToggle">🌙 Toggle Dark Mode</button>
-    <button id="downloadCSV">⬇️ Download CSV</button>
-  </div>
-
-  <table id="repoTable">
-    <thead>
-      <tr>
-        <th data-key="repo">Repository</th>
-        <th data-key="forked_from">Forked From</th>
-        <th data-key="open_issues">Open Issues</th>
-        <th data-key="open_prs">Open PRs</th>
-        <th data-key="triggered_on_push_or_pr">CI Enabled</th>
-        <th data-key="release_version">Latest Release Version</th>
-        <th data-key="tag">Latest Tag</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <script src="script.js?v=3"></script>
-
-  <footer class="footer">
-    <p>
-      Built with ❤️ using the GitHub API & styled with HashiCorp vibes.
-      <br />
-      <a href="https://github.com/mohanmanikanta2299/dashboard-metrics" target="_blank" rel="noopener">View Source on GitHub ↗</a>
-    </p>
+  <footer>
+    <p>Built with ❤️ using the GitHub API & styled with HashiCorp vibes.</p>
+    <p><a href="https://github.com/mohanmanikanta2299/dashboard-metrics" target="_blank">View Source on GitHub ↗</a></p>
   </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
