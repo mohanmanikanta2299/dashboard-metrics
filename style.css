@@ -1,4 +1,3 @@
-/* Base Styling */
 body {
   font-family: 'Segoe UI', Roboto, Arial, sans-serif;
   background-color: #f4f6fa;
@@ -6,16 +5,48 @@ body {
   margin: 40px auto;
   max-width: 1200px;
   padding: 0 20px;
+  transition: background 0.3s, color 0.3s;
 }
 
 h2 {
+  font-size: 2.5rem;
   color: #2c3e50;
-  font-size: 2rem;
-  margin-bottom: 24px;
   text-align: center;
+  position: relative;
+  margin-bottom: 32px;
 }
 
-/* Table Styling */
+h2::after {
+  content: "";
+  display: block;
+  margin: 8px auto 0;
+  width: 100px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to right, #3f51b5, #7986cb);
+}
+
+.controls {
+  text-align: right;
+  margin-bottom: 12px;
+}
+
+.controls button {
+  background-color: #3f51b5;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  margin-left: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.controls button:hover {
+  background-color: #303f9f;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -29,20 +60,22 @@ th, td {
   padding: 16px;
   text-align: left;
   font-size: 15px;
+  cursor: default;
 }
 
 th {
   background: linear-gradient(to right, #3f51b5, #5c6bc0);
   color: white;
   font-weight: 600;
-  letter-spacing: 0.5px;
   text-transform: uppercase;
+  user-select: none;
+  position: relative;
+  cursor: pointer;
 }
 
 td {
   background-color: #ffffff;
   border-bottom: 1px solid #ecf0f1;
-  vertical-align: middle;
 }
 
 tr:nth-child(even) td {
@@ -54,7 +87,88 @@ tr:hover td {
   transition: background-color 0.2s ease-in-out;
 }
 
-/* Icons and Indicators */
-td:has(.status-icon) {
-  font-size: 1.2rem;
+/* Sort indicators */
+th.asc::after,
+th.desc::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+}
+
+th.asc::after {
+  border-bottom-color: white;
+}
+
+th.desc::after {
+  border-top-color: white;
+}
+
+/* Dark Mode */
+body.dark {
+  background-color: #1e1e2f;
+  color: #e0e0e0;
+}
+
+body.dark h2 {
+  color: #f2f2f2;
+}
+
+body.dark table {
+  background-color: #2a2a3f;
+}
+
+body.dark th {
+  background: linear-gradient(to right, #5c6bc0, #7986cb);
+}
+
+body.dark td {
+  background-color: #33334d;
+  border-color: #444;
+}
+
+body.dark tr:nth-child(even) td {
+  background-color: #2e2e40;
+}
+
+body.dark tr:hover td {
+  background-color: #444466;
+}
+
+body.dark .controls button {
+  background-color: #5c6bc0;
+}
+
+body.dark .controls button:hover {
+  background-color: #7986cb;
+}
+
+body.dark th.asc::after {
+  border-bottom-color: #fff;
+}
+
+body.dark th.desc::after {
+  border-top-color: #fff;
+}
+
+.footer {
+  margin-top: 50px;
+  padding: 30px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  border-top: 1px solid #2a2a2a;
+  background-color: #1a1a1a;
+}
+
+.footer a {
+  color: #7c3aed;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+  color: #a78bfa;
 }

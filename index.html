@@ -3,56 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GitHub Repository Metrics</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>GitHub Repo Metrics</title>
+  <link rel="stylesheet" href="style.css?v=3"/>
 </head>
 <body>
 
   <h2>GitHub Repository Metrics</h2>
 
+  <div class="controls">
+    <button id="darkToggle">🌙 Toggle Dark Mode</button>
+    <button id="downloadCSV">⬇️ Download CSV</button>
+  </div>
+
   <table id="repoTable">
     <thead>
       <tr>
-        <th>Repository</th>
-        <th>Forked From</th>
-        <th>Open Issues</th>
-        <th>Open PRs</th>
-        <th>CI Enabled</th>
-        <th>Latest Release</th>
-        <th>Latest Tag</th>
+        <th data-key="repo">Repository</th>
+        <th data-key="forked_from">Forked From</th>
+        <th data-key="open_issues">Open Issues</th>
+        <th data-key="open_prs">Open PRs</th>
+        <th data-key="triggered_on_push_or_pr">CI Enabled</th>
+        <th data-key="release_version">Latest Release Version</th>
+        <th data-key="tag">Latest Tag</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
-  <script>
-    async function loadMetrics() {
-      try {
-        const response = await fetch(`metrics.json?t=${Date.now()}`);
-        const repos = await response.json();
-        const tbody = document.querySelector("#repoTable tbody");
-        tbody.innerHTML = "";
+  <script src="script.js?v=3"></script>
 
-        repos.forEach(repo => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${repo.repo}</td>
-            <td>${repo.forked_from}</td>
-            <td>${repo.open_issues}</td>
-            <td>${repo.open_prs}</td>
-            <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
-            <td>${repo.release_version}</td>
-            <td>${repo.tag}</td>
-          `;
-          tbody.appendChild(row);
-        });
-      } catch (error) {
-        console.error("Failed to load metrics.json:", error);
-      }
-    }
-
-    loadMetrics();
-  </script>
+  <footer class="footer">
+    <p>
+      Built with ❤️ using the GitHub API & styled with HashiCorp vibes.
+      <br />
+      <a href="https://github.com/mohanmanikanta2299/dashboard-metrics" target="_blank" rel="noopener">View Source on GitHub ↗</a>
+    </p>
+  </footer>
 
 </body>
 </html>
