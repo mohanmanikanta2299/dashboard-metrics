@@ -1,90 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Repo Metrics</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f8f9fc;
-        }
-    
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-    
-        th {
-            background-color: #3f51b5; /* Indigo */
-            color: #ffffff;
-            padding: 10px;
-            text-align: left;
-        }
-    
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            background-color: #ffffff;
-        }
-    
-        tr:nth-child(even) td {
-            background-color: #f0f4ff;
-        }
-    
-        tr:hover td {
-            background-color: #e3f2fd; /* Light blue on hover */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GitHub Repository Metrics</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <h2>GitHub Repository Metrics</h2>
-    <table id="repoTable">
-        <thead>
-            <tr>
-                <th>Repository</th>
-                <th>Forked From</th>
-                <th>Open Issues</th>
-                <th>Open PRs</th>
-                <th>CI Enabled</th>
-                <th>Latest Release Version</th>
-                <th>Latest Tag</tr>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+  <h2>GitHub Repository Metrics</h2>
 
-    <script>
-        async function loadMetrics() {
-            try {
-                const response = await fetch(`metrics.json?t=${new Date().getTime()}`);
-                const data = await response.json();
-                const tableBody = document.querySelector("#repoTable tbody");
-                tableBody.innerHTML = "";
+  <table id="repoTable">
+    <thead>
+      <tr>
+        <th>Repository</th>
+        <th>Forked From</th>
+        <th>Open Issues</th>
+        <th>Open PRs</th>
+        <th>CI Enabled</th>
+        <th>Latest Release Version</th>
+        <th>Latest Tag</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-                data.forEach(repo => {
-                    const row = `<tr>
-                        <td>${repo.repo}</td>
-                        <td>${repo.forked_from}</td>
-                        <td>${repo.open_issues}</td>
-                        <td>${repo.open_prs}</td>
-                        <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
-                        <td>${repo.release_version}</td>
-                        <td>${repo.tag}</td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
-                });
-            } catch (error) {
-                console.error("Error loading JSON:", error);
-            }
-        }
+  <script>
+    async function loadMetrics() {
+      try {
+        const response = await fetch(`metrics.json?t=${Date.now()}`);
+        const repos = await response.json();
+        const tbody = document.querySelector("#repoTable tbody");
+        tbody.innerHTML = "";
 
-        loadMetrics();
-    </script>
+        repos.forEach(repo => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${repo.repo}</td>
+            <td>${repo.forked_from || "-"}</td>
+            <td>${repo.open_issues}</td>
+            <td>${repo.open_prs}</td>
+            <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
+            <td>${repo.release_version || "-"}</td>
+            <td>${repo.tag || "-"}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Failed to load metrics.json:", error);
+      }
+    }
+
+    loadMetrics();
+  </script>
 
 </body>
 </html>
