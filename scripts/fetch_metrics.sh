@@ -114,7 +114,7 @@ fetch_metrics() {
     latest_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                       -H "Accept: application/vnd.github.v3+json" \
                       "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc" | \
-                      jq '[.[] | select(.merged_at != null])][0]')
+                      jq '[.[] | select(.merged_at != null)][0]')
     
     test_coverage="--"
     if [[ "$latest_pr != null" && -n "$latest_pr" ]]; then
