@@ -14,8 +14,6 @@ fi
 fetch_metrics() {
     repo=$1
 
-    heimdall_url="https://heimdall.hashicorp.services/site/assets/$repo"
-
     # Fetch repository details (includes open_issues_count)
     response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                      -H "Accept: application/vnd.github.v3+json" \
@@ -23,7 +21,7 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"forked_from\":\"--\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\",\"heimdall_url\":\"$heimdall_url\"}"
+        echo "{\"repo\":\"$repo\",\"forked_from\":\"--\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\"}"
         return
     fi
 
@@ -128,7 +126,7 @@ fetch_metrics() {
         tag="--"
     fi
 
-    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\",\"heimdall_url\":\"$heimdall_url\"}"
+    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\"}"
 }
 
 export -f fetch_metrics
