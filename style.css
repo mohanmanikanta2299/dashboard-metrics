@@ -112,6 +112,18 @@ th.desc::after {
   border-top-color: white;
 }
 
+/* Heimdall Link Styling */
+td a {
+  color: #0d47a1;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+td a:hover {
+  text-decoration: underline;
+  color: #002171;
+}
+
 /* Dark Mode */
 body.dark {
   background-color: #121212;
@@ -161,6 +173,15 @@ body.dark th.asc::after {
 
 body.dark th.desc::after {
   border-top-color: #fff;
+}
+
+/* Dark Mode - Heimdall link */
+body.dark td a {
+  color: #90caf9;
+}
+
+body.dark td a:hover {
+  color: #bbdefb;
 }
 
 .footer {

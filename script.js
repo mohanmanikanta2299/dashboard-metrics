@@ -6,6 +6,13 @@ async function loadMetrics() {
   try {
     const response = await fetch(`metrics.json?t=${Date.now()}`);
     metricsData = await response.json();
+
+    // Add Heimdall URL to each repo object
+    metricsData = metricsData.map(repo => ({
+      ...repo,
+      heimdall_url: `https://heimdall.hashicorp.services/site/assets/${repo.repo}`
+    }));
+
     renderTable(metricsData);
   } catch (error) {
     console.error("Error loading metrics:", error);
@@ -26,6 +33,7 @@ function renderTable(data) {
         <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
         <td>${repo.release_version}</td>
         <td>${repo.tag}</td>
+        <td><a href="${repo.heimdall_url}" target="_blank">View ↗</a></td>
       </tr>`;
     tableBody.innerHTML += row;
   });
@@ -67,9 +75,9 @@ function updateSortIndicators() {
 }
 
 function downloadCSV() {
-  let csv = "Repository,Forked From,Open Issues,Open PRs,CI Enabled,Latest Release Version,Latest Tag\n";
+  let csv = "Repository,Forked From,Open Issues,Open PRs,CI Enabled,Latest Release Version,Latest Tag,Heimdall Asset URL\n";
   metricsData.forEach(repo => {
-    csv += `"${repo.repo}","${repo.forked_from || "-"}",${repo.open_issues},${repo.open_prs},${repo.triggered_on_push_or_pr ? "Yes" : "No"},"${repo.release_version || "-"}","${repo.tag || "-"}"\n`;
+    csv += `"${repo.repo}","${repo.forked_from || "-"}",${repo.open_issues},${repo.open_prs},${repo.triggered_on_push_or_pr ? "Yes" : "No"},"${repo.release_version || "-"}","${repo.tag || "-"}","${repo.heimdall_url}"\n`;
   });
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
