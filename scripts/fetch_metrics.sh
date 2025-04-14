@@ -23,7 +23,7 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"forked_from\":\"--\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\",\"heimdall_url\":\"$heimdall_url\"}"
+        echo "{\"repo\":\"$repo\",\"forked_from\":\"--\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\",\"heimdall_url\":\"$heimdall_url\",\"test_coverage\":\"--\"}"
         return
     fi
 
@@ -109,6 +109,47 @@ fetch_metrics() {
         fi
     fi
 
+    # Fetching unit test coverage percentage
+    # 1. Get the latest merged pr
+    latest_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                      -H "Accept: application/vnd.github.v3+json" \
+                      "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc" | \
+                      jq '[.[] | select(.merged_at != null])][0]')
+    
+    test_coverage="--"
+    if [[ "$latest_pr != null" && -n "$latest_pr" ]]; then
+        pr_sha=$(echo "$latest_pr" | jq -r '.head.sha')
+        # 2. Get the workflow runs
+        run_id=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                   -H "Accept: application/vnd.github.v3+json" \
+                   "https://api.github.com/repos/hashicorp/$repo/actions/runs?event=pull_request&per_page=50" | \
+                   jq -r --arg sha "$pr_sha" '.workflow_run[]
+                   | select(.head.sha==$sha and .status=="completed" and .conclusion=="success")
+                   | .id' | head -n 1)
+        if [[ -n "$run_id" ]]; then
+            # 3. Get the artifact run
+             artifact_id=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                            -H "Accept: application/vnd.github.v3+json" \
+                            "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" | \
+                            jq -r 'artifacts[]
+                            | select(.name == "Coverage-report.*" or .name == "Coverage-report" or .name == "coverage-report.*" or .name == "coverage-report")
+                            | .id' | head -n 1)  
+            if [[ -n "$artifact_id" ]]; then
+                # 4. Download the zipped artifact and extract it.
+                curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  -o artifact_$repo.zip \
+                  "https://api.github.com/repos/hashicorp/$repo/actions/artifacts/$artifact_id/zip"
+
+                mkdir -p tmp_coverage_$repo && unzip -qq artifact_$repo.zip -d tmp_coverage_$repo
+                if [[ -f "tmp_coverage_$repo/coverage.out" ]]; then
+                    test_coverage=$(go tool cover -func=tmp_coverage_$repo/coverage.out | grep total | awk '{print $3}')
+                fi
+                rm -rf artifact_$repo.zip tmp_cov_$repo
+            fi
+        fi
+    fi
+
     # Get the latest release version
     release_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
@@ -128,7 +169,7 @@ fetch_metrics() {
         tag="--"
     fi
 
-    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\",\"heimdall_url\":\"$heimdall_url\"}"
+    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\",\"heimdall_url\":\"$heimdall_url\",\"test_coverage\":\"$test_coverage\"}"
 }
 
 export -f fetch_metrics
