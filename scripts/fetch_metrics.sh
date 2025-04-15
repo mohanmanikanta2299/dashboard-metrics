@@ -148,7 +148,7 @@ fetch_metrics() {
                         mkdir -p tmp_coverage_$repo && unzip -qq artifact_$repo.zip -d tmp_coverage_$repo
                         if [[ -f "tmp_coverage_$repo/coverage.out" ]]; then
                             test_coverage=$(go tool cover -func=tmp_coverage_$repo/coverage.out | grep total | awk '{print $3}')
-                            echo($test_coverage)
+                            echo "$test_coverage"
                         fi
                         rm -rf artifact_$repo.zip tmp_coverage_$repo
                     fi
