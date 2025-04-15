@@ -136,7 +136,7 @@ fetch_metrics() {
                              "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")
 
             artifact_url=$(echo "$artifacts" \
-                | jq -r '.artifacts[] | select(.name == "Coverage-report") | .archive_download_url' \
+                | jq -r '.artifacts[] | select(.name | test("(?i)^coverage-report")) | .archive_download_url' \
                 | head -n1)
 
             if [[ -n "$artifact_url" && "$artifact_url" != "null" ]]; then
@@ -149,7 +149,7 @@ fetch_metrics() {
                 unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
 
                 if [[ -f "$tmpdir/coverage.out" ]]; then
-                    coverage_output=$(go tool cover -func="$tmpdir/coverage.out" | grep total | awk '{print $3}')
+                    coverage_output=$(grep total $tmpdir/coverage.out | awk '{print $3}')
                     test_coverage="${coverage_output:-"--"}"
                 fi
 
