@@ -113,50 +113,51 @@ fetch_metrics() {
     # 1. Get the latest merged pr
     latest_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                       -H "Accept: application/vnd.github.v3+json" \
-                      "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc" | \
-                      jq '[.[] | select(.merged_at != null)][0]')
+                      "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc")
     
     test_coverage="--"
     if [[ "$latest_pr" != "null" && -n "$latest_pr" ]]; then
-        pr_sha=$(echo "$latest_pr" | jq -r '.head.sha')
-        # 2. Get the workflow runs
-        workflow_runs=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                   -H "Accept: application/vnd.github.v3+json" \
-                   "https://api.github.com/repos/hashicorp/$repo/actions/runs?event=pull_request&per_page=50")
-        if [[ "$workflow_runs" != "null" && -n "$workflow_runs" ]]; then
-            run_id=$(echo "$workflow_runs" | jq -r --arg sha "$pr_sha" \
-                '.workflow_runs[] 
-                | select(.head_sha == $sha and .status == "completed" and .conclusion == "success") 
-                | .id' | head -n 1)
-            if [[ -n "$run_id" ]]; then 
-                # 3. Get the artifact run
-                artifacts=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                -H "Accept: application/vnd.github.v3+json" \
-                                "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")  
-                if [[ "$artifacts" != "null" && -n "$artifacts" ]]; then
-                    artifact_id=$(echo "$artifacts" | jq -r \
-                        '.artifacts[] 
-                        | select(.name | test("(?i)^coverage-report")) 
-                        | .id' | head -n 1)
-                    if [[ -n "$artifact_id" ]]; then
-                        # 4. Download the zipped artifact and extract it.
-                        curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                            -H "Accept: application/vnd.github.v3+json" \
-                            -o artifact_$repo.zip \
-                            "https://api.github.com/repos/hashicorp/$repo/actions/artifacts/$artifact_id/zip"
+        merged_pr=$(echo "$latest_pr" | jq '[.[] | select(.merged_at != null)] | first')
+        if [[ -n "$merged_pr" && "$merged_pr" != "null" ]]; then
+            pr_sha=$(echo "$latest_pr" | jq -r '.head.sha')
+            # 2. Get the workflow runs
+            workflow_runs=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                                  -H "Accept: application/vnd.github.v3+json" \
+                                  "https://api.github.com/repos/hashicorp/$repo/actions/runs?event=pull_request&per_page=50")
+            if [[ "$workflow_runs" != "null" && -n "$workflow_runs" ]]; then
+                run_id=$(echo "$workflow_runs" | jq -r --arg sha "$pr_sha" \
+                    '.workflow_runs[] 
+                    | select(.head_sha == $sha and .status == "completed" and .conclusion == "success") 
+                    | .id' | head -n 1)
+                if [[ -n "$run_id" ]]; then 
+                    # 3. Get the artifact run
+                    artifacts=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                                      -H "Accept: application/vnd.github.v3+json" \
+                                      "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")  
+                    if [[ "$artifacts" != "null" && -n "$artifacts" ]]; then
+                        artifact_id=$(echo "$artifacts" | jq -r \
+                            '.artifacts[] 
+                            | select(.name | test("(?i)^coverage-report")) 
+                            | .id' | head -n 1)
+                        if [[ -n "$artifact_id" ]]; then
+                            # 4. Download the zipped artifact and extract it.
+                            curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                                  -H "Accept: application/vnd.github.v3+json" \
+                                  -o artifact_$repo.zip \
+                                  "https://api.github.com/repos/hashicorp/$repo/actions/artifacts/$artifact_id/zip"
 
-                        mkdir -p tmp_coverage_$repo && unzip -qq artifact_$repo.zip -d tmp_coverage_$repo
-                        if [[ -f "tmp_coverage_$repo/coverage.out" ]]; then
-                            test_coverage=$(grep total tmp_coverage_$repo/coverage.out | awk '{print $3}')
-                            echo "$test_coverage"
+                            mkdir -p tmp_coverage_$repo && unzip -qq artifact_$repo.zip -d tmp_coverage_$repo
+                            if [[ -f "tmp_coverage_$repo/coverage.out" ]]; then
+                                test_coverage=$(grep total tmp_coverage_$repo/coverage.out | awk '{print $3}')
+                                echo "$test_coverage%"
+                            fi
+                            rm -rf artifact_$repo.zip tmp_coverage_$repo
                         fi
-                        rm -rf artifact_$repo.zip tmp_coverage_$repo
                     fi
                 fi
             fi
         fi
     fi
-
 
     # Get the latest release version
     release_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
