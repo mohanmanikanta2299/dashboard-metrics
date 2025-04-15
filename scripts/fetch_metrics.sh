@@ -117,7 +117,7 @@ fetch_metrics() {
     
     test_coverage="--"
     if [[ "$latest_pr" != "null" && -n "$latest_pr" ]]; then
-        merged_pr=$(echo "$latest_pr" | jq '[.[] | select(.merged_at != null)][0]')
+        merged_pr=$(echo "$latest_pr" | jq -r '[.[] | select(.merged_at != null)][0]')
         if [[ -n "$merged_pr" && "$merged_pr" != "null" ]]; then
             pr_sha=$(echo "$merged_pr" | jq -r '.head.sha')
             # 2. Get the workflow runs
