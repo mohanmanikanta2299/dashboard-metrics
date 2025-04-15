@@ -135,8 +135,8 @@ fetch_metrics() {
                                 "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")  
                 if [[ "$artifacts" != "null" && -n "$artifacts" ]]; then
                     artifact_id=$(echo "$artifacts" | jq -r \
-                        '.artifacts[]?
-                        | select(.name | test("(?i)^coverage-report.*"))
+                        '.artifacts[]
+                        | select(.name | test("(?i)^coverage-report"))
                         | .id' | head -n 1)
                     if [[ -n "$artifact_id" ]]; then
                         # 4. Download the zipped artifact and extract it.
