@@ -18,30 +18,12 @@
     "tag": "--"
   },
   {
-    "repo": "errwrap",
-    "forked_from": "--",
-    "open_issues": 4,
-    "open_prs": 3,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "v1.1.0"
-  },
-  {
     "repo": "go-bexpr",
     "forked_from": "--",
     "open_issues": 8,
     "open_prs": 9,
     "triggered_on_push_or_pr": true,
     "release_version": "v0.1.14",
-    "tag": "--"
-  },
-  {
-    "repo": "dbassert",
-    "forked_from": "--",
-    "open_issues": 0,
-    "open_prs": 1,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
     "tag": "--"
   },
   {
@@ -52,6 +34,24 @@
     "triggered_on_push_or_pr": true,
     "release_version": "--",
     "tag": "v0.5.0"
+  },
+  {
+    "repo": "errwrap",
+    "forked_from": "--",
+    "open_issues": 4,
+    "open_prs": 3,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "v1.1.0"
+  },
+  {
+    "repo": "copywrite",
+    "forked_from": "--",
+    "open_issues": 11,
+    "open_prs": 20,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.22.0",
+    "tag": "--"
   },
   {
     "repo": "go-argmapper",
@@ -72,19 +72,19 @@
     "tag": "v1.1.7"
   },
   {
-    "repo": "copywrite",
+    "repo": "dbassert",
     "forked_from": "--",
-    "open_issues": 11,
-    "open_prs": 20,
+    "open_issues": 0,
+    "open_prs": 1,
     "triggered_on_push_or_pr": true,
-    "release_version": "v0.22.0",
+    "release_version": "--",
     "tag": "--"
   },
   {
     "repo": "go-eventlogger",
     "forked_from": "--",
     "open_issues": 1,
-    "open_prs": 6,
+    "open_prs": 7,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
     "tag": "v0.2.11"
@@ -144,15 +144,6 @@
     "tag": "--"
   },
   {
-    "repo": "go-plugin",
-    "forked_from": "--",
-    "open_issues": 62,
-    "open_prs": 26,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v1.6.3",
-    "tag": "--"
-  },
-  {
     "repo": "go-multierror",
     "forked_from": "--",
     "open_issues": 13,
@@ -162,21 +153,21 @@
     "tag": "v1.1.1"
   },
   {
+    "repo": "go-getter",
+    "forked_from": "--",
+    "open_issues": 135,
+    "open_prs": 42,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.7.8",
+    "tag": "--"
+  },
+  {
     "repo": "go-discover",
     "forked_from": "--",
     "open_issues": 42,
     "open_prs": 43,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
-    "tag": "--"
-  },
-  {
-    "repo": "go-getter",
-    "forked_from": "--",
-    "open_issues": 135,
-    "open_prs": 43,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v1.7.8",
     "tag": "--"
   },
   {
@@ -198,15 +189,6 @@
     "tag": "v1.0.0"
   },
   {
-    "repo": "go-rootcerts",
-    "forked_from": "--",
-    "open_issues": 9,
-    "open_prs": 4,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "v1.0.2"
-  },
-  {
     "repo": "go-slug",
     "forked_from": "--",
     "open_issues": 5,
@@ -214,6 +196,15 @@
     "triggered_on_push_or_pr": true,
     "release_version": "v0.16.5",
     "tag": "--"
+  },
+  {
+    "repo": "go-rootcerts",
+    "forked_from": "--",
+    "open_issues": 9,
+    "open_prs": 4,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "v1.0.2"
   },
   {
     "repo": "go-sockaddr",
@@ -234,15 +225,6 @@
     "tag": "v0.7.7"
   },
   {
-    "repo": "go-uuid",
-    "forked_from": "--",
-    "open_issues": 0,
-    "open_prs": 1,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "v1.0.3"
-  },
-  {
     "repo": "go-syslog",
     "forked_from": "--",
     "open_issues": 0,
@@ -252,12 +234,30 @@
     "tag": "v1.0.0"
   },
   {
+    "repo": "go-uuid",
+    "forked_from": "--",
+    "open_issues": 0,
+    "open_prs": 1,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "v1.0.3"
+  },
+  {
     "repo": "go-version",
     "forked_from": "--",
     "open_issues": 17,
     "open_prs": 21,
     "triggered_on_push_or_pr": true,
     "release_version": "v1.7.0",
+    "tag": "--"
+  },
+  {
+    "repo": "go-plugin",
+    "forked_from": "--",
+    "open_issues": 62,
+    "open_prs": 26,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.6.3",
     "tag": "--"
   },
   {
@@ -279,24 +279,6 @@
     "tag": "--"
   },
   {
-    "repo": "memberlist",
-    "forked_from": "--",
-    "open_issues": 74,
-    "open_prs": 30,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.5.3",
-    "tag": "--"
-  },
-  {
-    "repo": "mql",
-    "forked_from": "--",
-    "open_issues": 1,
-    "open_prs": 2,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.1.4",
-    "tag": "--"
-  },
-  {
     "repo": "hil",
     "forked_from": "--",
     "open_issues": 6,
@@ -306,12 +288,21 @@
     "tag": "--"
   },
   {
-    "repo": "mdns",
+    "repo": "memberlist",
     "forked_from": "--",
-    "open_issues": 22,
-    "open_prs": 18,
+    "open_issues": 74,
+    "open_prs": 30,
     "triggered_on_push_or_pr": true,
-    "release_version": "v1.0.6",
+    "release_version": "v0.5.3",
+    "tag": "--"
+  },
+  {
+    "repo": "net-rpc-msgpackrpc",
+    "forked_from": "--",
+    "open_issues": 0,
+    "open_prs": 0,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.0.1",
     "tag": "--"
   },
   {
@@ -324,12 +315,30 @@
     "tag": "--"
   },
   {
-    "repo": "net-rpc-msgpackrpc",
+    "repo": "mql",
     "forked_from": "--",
-    "open_issues": 0,
-    "open_prs": 0,
+    "open_issues": 1,
+    "open_prs": 4,
     "triggered_on_push_or_pr": true,
-    "release_version": "v2.0.1",
+    "release_version": "v0.1.4",
+    "tag": "--"
+  },
+  {
+    "repo": "mdns",
+    "forked_from": "--",
+    "open_issues": 22,
+    "open_prs": 18,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.0.6",
+    "tag": "--"
+  },
+  {
+    "repo": "raft-boltdb",
+    "forked_from": "--",
+    "open_issues": 6,
+    "open_prs": 3,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.3.1",
     "tag": "--"
   },
   {
@@ -351,21 +360,21 @@
     "tag": "--"
   },
   {
-    "repo": "raft-boltdb",
-    "forked_from": "--",
-    "open_issues": 6,
-    "open_prs": 3,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v2.3.1",
-    "tag": "--"
-  },
-  {
     "repo": "raft-wal",
     "forked_from": "--",
     "open_issues": 2,
-    "open_prs": 4,
+    "open_prs": 3,
     "triggered_on_push_or_pr": true,
     "release_version": "v0.4.2",
+    "tag": "--"
+  },
+  {
+    "repo": "vagrant-plugin-sdk",
+    "forked_from": "--",
+    "open_issues": 0,
+    "open_prs": 5,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
     "tag": "--"
   },
   {
@@ -376,15 +385,6 @@
     "triggered_on_push_or_pr": false,
     "release_version": "--",
     "tag": "v1.5.0"
-  },
-  {
-    "repo": "vagrant-plugin-sdk",
-    "forked_from": "--",
-    "open_issues": 0,
-    "open_prs": 5,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "--"
   },
   {
     "repo": "raft-snapshot",
@@ -408,7 +408,7 @@
     "repo": "go-metrics",
     "forked_from": "--",
     "open_issues": 32,
-    "open_prs": 26,
+    "open_prs": 27,
     "triggered_on_push_or_pr": false,
     "release_version": "v0.5.4",
     "tag": "--"
