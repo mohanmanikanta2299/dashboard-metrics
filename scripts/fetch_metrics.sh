@@ -119,7 +119,7 @@ fetch_metrics() {
     if [[ "$latest_pr" != "null" && -n "$latest_pr" ]]; then
         merged_pr=$(echo "$latest_pr" | jq '[.[] | select(.merged_at != null)] | first')
         if [[ -n "$merged_pr" && "$merged_pr" != "null" ]]; then
-            pr_sha=$(echo "$latest_pr" | jq -r '.head.sha')
+            pr_sha=$(echo "$merged_pr" | jq -r '.head.sha')
             # 2. Get the workflow runs
             workflow_runs=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                   -H "Accept: application/vnd.github.v3+json" \
