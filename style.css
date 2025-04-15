@@ -198,22 +198,3 @@ body.dark td a:hover {
   font-size: 14px;
   color: #666;
 }
-
-.footer a {
-  color: #000;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.footer a:hover {
-  text-decoration: underline;
-  color: #222;
-}
-
-body.dark .footer a {
-  color: #a78bfa;
-}
-
-body.dark .footer a:hover {
-  color: #c4b5fd;
-}
