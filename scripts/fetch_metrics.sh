@@ -109,60 +109,53 @@ fetch_metrics() {
         fi
     fi
 
-    # Fetching unit test coverage percentage
-    # 1. Get the latest merged pr
-    latest_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                      -H "Accept: application/vnd.github.v3+json" \
-                      "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc")
-    
-    test_coverage="--"
-    if echo "$latest_pr" | jq -e . >/dev/null 2>&1; then
-        merged_pr=$(echo "$latest_pr" | jq -r '[.[] | select(.merged_at != null)][0]')
-        if [[ -n "$merged_pr" && "$merged_pr" != "null" ]]; then
-            pr_sha=$(echo "$merged_pr" | jq -r '.head.sha')
-            # 2. Get the workflow runs
-            workflow_runs=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                  -H "Accept: application/vnd.github.v3+json" \
-                                  "https://api.github.com/repos/hashicorp/$repo/actions/runs?event=pull_request&per_page=50")
-            if echo "$workflow_runs" | jq -e . >/dev/null 2>&1; then
-                run_id=$(echo "$workflow_runs" | jq -r --arg sha "$pr_sha" \
-                    '.workflow_runs[] 
-                    | select(.head_sha == $sha and .status == "completed" and .conclusion == "success") 
-                    | .id' | head -n 1)
-                if [[ -n "$run_id" ]]; then 
-                    # 3. Get the artifact run
-                    artifacts=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                      -H "Accept: application/vnd.github.v3+json" \
-                                      "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")  
-                    if echo "$artifacts" | jq -e . >/dev/null 2>&1; then
-                        artifact_id=$(echo "$artifacts" | jq -r \
-                            '.artifacts[] 
-                            | select(.name | test("(?i)^coverage-report")) 
-                            | .id' | head -n 1)
-                        if [[ -n "$artifact_id" ]]; then
-                            # 4. Download the zipped artifact and extract it.
-                            curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                  -H "Accept: application/vnd.github.v3+json" \
-                                  -o artifact_$repo.zip \
-                                  "https://api.github.com/repos/hashicorp/$repo/actions/artifacts/$artifact_id/zip"
+     # Get the latest merged PR
+    latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                            -H "Accept: application/vnd.github.v3+json" \
+                            "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc&per_page=10" \
+                            | jq '[.[] | select(.merged_at != null)] | first')
 
-                            mkdir -p tmp_coverage_$repo && unzip -qq artifact_$repo.zip -d tmp_coverage_$repo
-                            if [[ -f "tmp_coverage_$repo/coverage.out" ]]; then
-                                test_coverage=$(grep total tmp_coverage_$repo/coverage.out | awk '{print $3}')
-                                echo "$test_coverage%"
-                            fi
-                            rm -rf artifact_$repo.zip tmp_coverage_$repo
-                        fi
-                    else
-                      echo "$artifacts" > debug_artifacts_$repo.json
-                    fi
+    test_coverage="--"
+
+    if [[ "$latest_merged_pr" != "null" && -n "$latest_merged_pr" ]]; then
+        pr_number=$(echo "$latest_merged_pr" | jq '.number')
+        pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merge_commit_sha')
+
+        # Find the workflow runs associated with the merge commit
+        runs=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                    -H "Accept: application/vnd.github.v3+json" \
+                    "https://api.github.com/repos/hashicorp/$repo/actions/runs?per_page=10" \
+              | jq --arg sha "$pr_merge_commit_sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")]')
+
+        if [[ "$runs" != "null" && $(echo "$runs" | jq length) -gt 0 ]]; then
+            run_id=$(echo "$runs" | jq '.[0].id')
+
+            # Get artifacts for that run
+            artifacts=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                             -H "Accept: application/vnd.github.v3+json" \
+                             "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")
+
+            artifact_url=$(echo "$artifacts" \
+                | jq -r '.artifacts[] | select(.name == "Coverage-report") | .archive_download_url' \
+                | head -n1)
+
+            if [[ -n "$artifact_url" && "$artifact_url" != "null" ]]; then
+                # Create a temp dir for the artifact
+                tmpdir=$(mktemp -d)
+                curl -sL -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                     -H "Accept: application/vnd.github.v3+json" \
+                     "$artifact_url" -o "$tmpdir/artifact.zip"
+
+                unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
+
+                if [[ -f "$tmpdir/coverage.out" ]]; then
+                    coverage_output=$(go tool cover -func="$tmpdir/coverage.out" | grep total | awk '{print $3}')
+                    test_coverage="${coverage_output:-"--"}"
                 fi
-            else
-              echo "$workflow_runs" > debug_workflows_$repo.json
+
+                rm -rf "$tmpdir"
             fi
         fi
-    else
-      echo "$latest_pr" > debug_latest_pr_$repo.json
     fi
 
     # Get the latest release version
