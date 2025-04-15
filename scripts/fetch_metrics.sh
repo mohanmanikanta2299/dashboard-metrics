@@ -114,7 +114,7 @@ fetch_metrics() {
     latest_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                       -H "Accept: application/vnd.github.v3+json" \
                       "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc" | \
-                      jq '[.[] | select(.merged_at != null)] | first')
+                      jq '[.[] | select(.merged_at != null)][0]')
     
     test_coverage="--"
     if [[ "$latest_pr" != "null" && -n "$latest_pr" ]]; then
@@ -125,7 +125,7 @@ fetch_metrics() {
                    "https://api.github.com/repos/hashicorp/$repo/actions/runs?event=pull_request&per_page=50")
         if [[ "$workflow_runs" != "null" && -n "$workflow_runs" ]]; then
             run_id=$(echo "$workflow_runs" | jq -r --arg sha "$pr_sha" \
-                '.workflow_runs[]? 
+                '.workflow_runs[] 
                 | select(.head_sha == $sha and .status == "completed" and .conclusion == "success") 
                 | .id' | head -n 1)
             if [[ -n "$run_id" ]]; then 
@@ -135,7 +135,7 @@ fetch_metrics() {
                                 "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")  
                 if [[ "$artifacts" != "null" && -n "$artifacts" ]]; then
                     artifact_id=$(echo "$artifacts" | jq -r \
-                        '.artifacts[]? 
+                        '.artifacts[] 
                         | select(.name | test("(?i)^coverage-report")) 
                         | .id' | head -n 1)
                     if [[ -n "$artifact_id" ]]; then
