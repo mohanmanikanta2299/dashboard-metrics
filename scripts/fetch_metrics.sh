@@ -116,7 +116,7 @@ fetch_metrics() {
                       "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc")
     
     test_coverage="--"
-    if [[ "$latest_pr" != "null" && -n "$latest_pr" ]]; then
+    if echo "$latest_pr" | jq -e . >/dev/null 2>&1; then
         merged_pr=$(echo "$latest_pr" | jq -r '[.[] | select(.merged_at != null)][0]')
         if [[ -n "$merged_pr" && "$merged_pr" != "null" ]]; then
             pr_sha=$(echo "$merged_pr" | jq -r '.head.sha')
@@ -124,7 +124,7 @@ fetch_metrics() {
             workflow_runs=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                   -H "Accept: application/vnd.github.v3+json" \
                                   "https://api.github.com/repos/hashicorp/$repo/actions/runs?event=pull_request&per_page=50")
-            if [[ "$workflow_runs" != "null" && -n "$workflow_runs" ]]; then
+            if echo "$workflow_runs" | jq -e . >/dev/null 2>&1; then
                 run_id=$(echo "$workflow_runs" | jq -r --arg sha "$pr_sha" \
                     '.workflow_runs[] 
                     | select(.head_sha == $sha and .status == "completed" and .conclusion == "success") 
@@ -134,7 +134,7 @@ fetch_metrics() {
                     artifacts=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                       -H "Accept: application/vnd.github.v3+json" \
                                       "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")  
-                    if [[ "$artifacts" != "null" && -n "$artifacts" ]]; then
+                    if echo "$artifacts" | jq -e . >/dev/null 2>&1; then
                         artifact_id=$(echo "$artifacts" | jq -r \
                             '.artifacts[] 
                             | select(.name | test("(?i)^coverage-report")) 
@@ -153,10 +153,16 @@ fetch_metrics() {
                             fi
                             rm -rf artifact_$repo.zip tmp_coverage_$repo
                         fi
+                    else
+                      echo "$artifacts" > debug_artifacts_$repo.json
                     fi
                 fi
+            else
+              echo "$workflow_runs" > debug_workflows_$repo.json
             fi
         fi
+    else
+      echo "$latest_pr" > debug_latest_pr_$repo.json
     fi
 
     # Get the latest release version
