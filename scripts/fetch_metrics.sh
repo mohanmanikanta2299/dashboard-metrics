@@ -125,7 +125,7 @@ fetch_metrics() {
                    "https://api.github.com/repos/hashicorp/$repo/actions/runs?event=pull_request&per_page=50")
         if [[ "$workflow_runs" != "null" && -n "$workflow_runs" ]]; then
             run_id=$(echo "$workflow_runs" | jq -r --arg sha "$pr_sha" \
-                '.workflow_runs[]?
+                '.workflow_runs[]
                 | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")
                 | .id' | head -n 1)
             if [[ -n "$run_id" ]]; then 
@@ -147,7 +147,7 @@ fetch_metrics() {
 
                         mkdir -p tmp_coverage_$repo && unzip -qq artifact_$repo.zip -d tmp_coverage_$repo
                         if [[ -f "tmp_coverage_$repo/coverage.out" ]]; then
-                            test_coverage=$(go tool cover -func=tmp_coverage_$repo/coverage.out | grep total | awk '{print $3}')
+                            test_coverage=$(grep total tmp_coverage_$repo/coverage.out | awk '{print $3}')
                             echo "$test_coverage"
                         fi
                         rm -rf artifact_$repo.zip tmp_coverage_$repo
