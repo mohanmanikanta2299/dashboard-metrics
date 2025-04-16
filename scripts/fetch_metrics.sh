@@ -109,96 +109,46 @@ fetch_metrics() {
         fi
     fi
 
-     # Get the latest merged PR
-latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-    -H "Accept: application/vnd.github.v3+json" \
-    "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc&per_page=10")
+    test_coverage="--"
 
-# Ensure valid JSON
-if ! echo "$latest_merged_pr" | jq . >/dev/null 2>&1; then
-    echo "❌ Failed to fetch PRs for $repo"
-    exit 1
-fi
+    latest_merged_pr=$(curl -s -H "Authorizatin: Bearer $GITHUB_APP_TOKEN" \
+                             -H "Accept: application/vnd.github.v3+json" \
+                             "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc&per_page=10" \
+                             | jq -e '[.[] | select(.merged_at != null)] | first // empty')
+    
+    if [[ -n "$latest_merged_pr" ]]; then
+        pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merge_commit_sha // empty')
 
-latest_merged_pr=$(echo "$latest_merged_pr" | jq '[.[] | select(.merged_at != null)] | first')
+        if [[ -n "$pr_merge_commit_sha" ]]; then
+            run_id=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                           -H "Accept: application/vnd.github.v3+json" \
+                           "https://api.github.com/repos/hashicorp/$repo/actions/runs?per_page=10" \
+                           | jq -e --arg sha "$pr_merge_commit_sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")] | .[0].id // empty')
 
-test_coverage="--"
+            if [[ -n "$run_id" ]]; then
+                artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                                     -H "Accept: application/vnd.github.v3+json" \
+                                     "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
+                                     | jq -e -r '.artifacts[] | select(.name | test("(?i)^coverage-report")) | .archive_download_url' \
+                                     | head -n1)
 
-if [[ "$latest_merged_pr" != "null" && -n "$latest_merged_pr" ]]; then
-    pr_number=$(echo "$latest_merged_pr" | jq '.number')
-    pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merge_commit_sha')
-    echo "🔍 Found merged PR #$pr_number with SHA $pr_merge_commit_sha"
+                if [[ -n "$artifact_url" ]]; then
+                    tmpdir=$(mktemp -d)
+                    curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                          -H "Accept: application/vnd.github.v3+json" \
+                          "$artifact_url" -o "$tmpdir/artifact.zip"
+                    unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
+                    coverage_file=$(find "$tmpdir" -type f -name "coverage.out" | head -n1)
 
-    # Fetch workflow runs for this commit
-    runs=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-        -H "Accept: application/vnd.github.v3+json" \
-        "https://api.github.com/repos/hashicorp/$repo/actions/runs?per_page=10")
-
-    if ! echo "$runs" | jq . >/dev/null 2>&1; then
-        echo "❌ Failed to fetch workflow runs for $repo"
-        exit 1
-    fi
-
-    runs=$(echo "$runs" | jq --arg sha "$pr_merge_commit_sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")]')
-
-    if [[ "$runs" != "null" && $(echo "$runs" | jq length) -gt 0 ]]; then
-        run_id=$(echo "$runs" | jq '.[0].id')
-        echo "✅ Found successful workflow run ID: $run_id"
-
-        artifacts=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts")
-
-        if ! echo "$artifacts" | jq . >/dev/null 2>&1; then
-            echo "❌ Failed to fetch artifacts for run $run_id"
-            exit 1
-        fi
-
-        artifact_url=$(echo "$artifacts" \
-            | jq -r '.artifacts[] | select(.name | test("(?i)^coverage-report")) | .archive_download_url' \
-            | head -n1)
-
-        if [[ -n "$artifact_url" && "$artifact_url" != "null" ]]; then
-            echo "📦 Downloading coverage artifact..."
-            tmpdir=$(mktemp -d)
-            curl -sL -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "$artifact_url" -o "$tmpdir/artifact.zip"
-
-            unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
-
-            coverage_file=$(find "$tmpdir" -type f -name "coverage.out" | head -n1)
-
-            if [[ -f "$coverage_file" ]]; then
-                echo "📁 Found coverage file: $coverage_file"
-
-                # Option A: go tool cover (best if it works)
-                pushd "$(mktemp -d)" >/dev/null
-                go mod init dummy >/dev/null 2>&1
-                coverage_output=$(go tool cover -func="$coverage_file" 2>/dev/null | grep total | awk '{print $3}')
-                popd >/dev/null
-
-                # Option B: fallback to grep if needed
-                if [[ -z "$coverage_output" ]]; then
-                    echo "⚠️  go tool cover failed, falling back to grep"
-                    coverage_output=$(grep total "$coverage_file" | awk '{print $3}')
+                    if [[ -f "$coverage_file" ]]; then
+                        coverage_output=$(go tool cover -func="$coverage_file" 2>/dev/null | grep total | awk '{print $3}')
+                        test_coverage="${coverage_output:-"--"}"
+                    fi
+                    rm -rf "$tmpdir"
                 fi
-
-                test_coverage="${coverage_output:-"--"}"
-            else
-                echo "❌ No coverage.out file found in artifact"
             fi
-
-            rm -rf "$tmpdir"
-        else
-            echo "❌ No coverage-report artifact found"
         fi
-    else
-        echo "❌ No matching successful workflow run for commit $pr_merge_commit_sha"
     fi
-else
-    echo "❌ No merged PR found for $repo"
-fi
 
     # Get the latest release version
     release_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
