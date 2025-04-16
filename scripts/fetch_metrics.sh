@@ -118,7 +118,7 @@ fetch_metrics() {
     
     if [[ -n "$latest_merged_pr" ]]; then
         pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merge_commit_sha // empty')
-        echo "✅ Found merged commit SHA: $pr_merge_commit_sha"
+        echo "✅ Found merged commit SHA: $pr_merge_commit_sha" >&2
 
         if [[ -n "$pr_merge_commit_sha" ]]; then
             run_id=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
@@ -126,7 +126,7 @@ fetch_metrics() {
                            "https://api.github.com/repos/hashicorp/$repo/actions/runs?per_page=10" \
                            | jq -e --arg sha "$pr_merge_commit_sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")] | .[0].id // empty')
 
-            echo "✅ Found run_id: $run_id"
+            echo "✅ Found run_id: $run_id" >&2
 
             if [[ -n "$run_id" ]]; then
                 artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
@@ -135,7 +135,7 @@ fetch_metrics() {
                                      | jq -e -r '.artifacts[] | select(.name | test("(?i)^coverage-report")) | .archive_download_url' \
                                      | head -n1)
 
-                echo "📦 Artifact URL: $artifact_url"
+                echo "📦 Artifact URL: $artifact_url" >&2
 
                 if [[ -n "$artifact_url" ]]; then
                     tmpdir=$(mktemp -d)
@@ -143,25 +143,25 @@ fetch_metrics() {
                           -H "Accept: application/vnd.github.v3+json" \
                           "$artifact_url" -o "$tmpdir/artifact.zip"
                     unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
-                    echo "📂 Contents of artifact:"
+                    echo "📂 Contents of artifact:" >&2
                     find "$tmpdir"
 
                     coverage_file=$(find "$tmpdir" -type f -name "coverage.out" | head -n1)
 
                     if [[ -f "$coverage_file" ]]; then
-                        echo "✅ Found coverage.out"
+                        echo "✅ Found coverage.out" >&2
                         coverage_output=$(go tool cover -func="$coverage_file" 2>/dev/null | grep total | awk '{print $3}')
                         test_coverage="${coverage_output:-"--"}"
-                        echo "📊 Extracted coverage: $test_coverage"
+                        echo "📊 Extracted coverage: $test_coverage" >&2
                     else
-                        echo "❌ coverage.out not found in extracted artifact"
+                        echo "❌ coverage.out not found in extracted artifact" >&2
                     fi
                     rm -rf "$tmpdir"
                 else
-                    echo "❌ No matching coverage artifact found"
+                    echo "❌ No matching coverage artifact found" >&2
                 fi
             else
-                echo "❌ No successful workflow run found for commit $pr_merge_commit_sha"
+                echo "❌ No successful workflow run found for commit $pr_merge_commit_sha" >&2
             fi
         fi
     fi
