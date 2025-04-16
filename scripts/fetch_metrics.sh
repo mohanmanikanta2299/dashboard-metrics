@@ -150,8 +150,13 @@ fetch_metrics() {
 
                     if [[ -f "$coverage_file" ]]; then
                         echo "✅ Found coverage.out" >&2
-                        coverage_output=$(go tool cover -func="$coverage_file" 2>/dev/null | grep total | awk '{print $3}')
-                        test_coverage="${coverage_output:-"--"}"
+                        coverage_output=$(go tool cover -func="$coverage_file" 2>/dev/null | awk '/^total:/ { print $3 }')
+                        if [[ "$coverage_output" =~ ^[0-9]+\.[0-9]+%$ ]]; then
+                            test_coverage="$coverage_output"
+                        else
+                            echo "⚠️ Invalid or missing total coverage in $coverage_file" >&2
+                            test_coverage="--"
+                        fi
                         echo "📊 Extracted coverage: $test_coverage" >&2
                     else
                         echo "❌ coverage.out not found in extracted artifact" >&2
