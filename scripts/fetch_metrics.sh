@@ -148,9 +148,14 @@ fetch_metrics() {
 
                 unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
 
-                if [[ -f "$tmpdir/coverage.out" ]]; then
-                    coverage_output=$(grep total $tmpdir/coverage.out | awk '{print $3}')
-                    test_coverage="${coverage_output:-"--"}"
+                coverage_file=$(find "$tmpdir" -type f -name "coverage.out" | head -n1)
+
+                if [[ -f "$coverage_file" ]]; then
+                   echo "Found coverage file: $coverage_file"
+                   coverage_output=$(go tool cover -func="$coverage_file" | grep total | awk '{print $3}')
+                   test_coverage="${coverage_output:-"--"}"
+                else
+                   echo "No coverage.out file found in artifact"
                 fi
 
                 rm -rf "$tmpdir"
