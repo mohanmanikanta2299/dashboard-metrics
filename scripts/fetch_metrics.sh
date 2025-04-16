@@ -198,14 +198,7 @@ fetch_metrics() {
         tag="--"
     fi
 
-    output= "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\",\"heimdall_url\":\"$heimdall_url\",\"test_coverage\":\"$test_coverage\"}"
-
-    # Output only if it's valid JSON
-    if echo "$output" | jq empty >/dev/null 2>&1; then
-        echo "$output"
-    else
-        echo "⚠️ Skipped invalid JSON for $repo" >&2
-    fi
+    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\",\"heimdall_url\":\"$heimdall_url\",\"test_coverage\":\"$test_coverage\"}"
 }
 
 export -f fetch_metrics
@@ -213,7 +206,7 @@ export -f fetch_metrics
 # Use xargs for parallel execution
 {
     echo -n "["
-    cat "$REPO_FILE" | xargs -I{} -P $NUM_JOBS bash -c 'fetch_metrics "$@"' _ {} | paste -sd "," -
+    cat "$REPO_FILE" | xargs -I{} -P $NUM_JOBS bash -c 'fetch_metrics "$1"' -- {} | paste -sd "," -
     echo "]"
 } | jq '.' > "$OUTPUT_FILE"
 
