@@ -111,8 +111,6 @@ fetch_metrics() {
 
     test_coverage="--"
 
-    echo "starting: $repo" >&2
-
     latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
                              "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc&per_page=10" \
@@ -120,7 +118,6 @@ fetch_metrics() {
     
     if [[ -n "$latest_merged_pr" && "$latest_merged_pr" != "null" ]]; then
         pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merge_commit_sha // empty')
-        echo "✅ Found merged commit SHA: $pr_merge_commit_sha" >&2
 
         if [[ -n "$pr_merge_commit_sha" ]]; then
             run_id=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
@@ -129,8 +126,6 @@ fetch_metrics() {
                            | jq -e --arg sha "$pr_merge_commit_sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")] | .[0].id // empty')
 
             if [[ -n "$run_id" ]]; then
-                echo "✅ Found run_id: $run_id" >&2
-
                 artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                      -H "Accept: application/vnd.github.v3+json" \
                                      "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
@@ -138,7 +133,6 @@ fetch_metrics() {
                                      | head -n1)
 
                 if [[ -n "$artifact_url" ]]; then
-                    echo "📦 Artifact URL: $artifact_url" >&2
                     tmpdir=$(mktemp -d)
                     curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                           -H "Accept: application/vnd.github.v3+json" \
@@ -147,10 +141,6 @@ fetch_metrics() {
                     coverage_file=$(find "$tmpdir" -type f -name "coverage.out" | head -n1)
 
                     if [[ -f "$coverage_file" ]]; then
-                        echo "✅ Found coverage.out" >&2
-                        echo "🔍 Contents of $coverage_file:" >&2
-                        cat "$coverage_file"
-
                         total=0
                         covered=0
                         while read -r line; do
@@ -164,17 +154,10 @@ fetch_metrics() {
 
                         if [[ "$total" -gt 0 ]]; then
                             test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100 }")
-                            echo "📊 Extracted coverage: $test_coverage" >&2
-                        else
-                            echo "⚠️ Invalid or missing total coverage in $coverage_file" >&2
                         fi
-                    else
-                       echo "⚠️ coverage.out not found" >&2
                     fi
                     rm -rf "$tmpdir"
                 fi
-            else
-                echo "❌ No successful workflow run found for commit $pr_merge_commit_sha" >&2
             fi
         fi
     fi
@@ -206,7 +189,7 @@ export -f fetch_metrics
 # Use xargs for parallel execution
 {
     echo -n "["
-    cat "$REPO_FILE" | xargs -I{} -P $NUM_JOBS bash -c 'fetch_metrics "$1"' -- {} | paste -sd "," -
+    cat "$REPO_FILE" | xargs -I{} -P $NUM_JOBS bash -c 'fetch_metrics "$@"' _ {} | paste -sd "," -
     echo "]"
 } | jq '.' > "$OUTPUT_FILE"
 
