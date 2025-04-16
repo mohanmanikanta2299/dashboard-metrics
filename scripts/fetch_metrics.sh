@@ -113,7 +113,7 @@ fetch_metrics() {
 
     echo "starting: $repo" >&2
 
-    latest_merged_pr=$(curl -s -H "Authorizatin: Bearer $GITHUB_APP_TOKEN" \
+    latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
                              "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc&per_page=10" \
                              | jq -e '[.[] | select(.merged_at != null)] | first // empty')
@@ -198,7 +198,14 @@ fetch_metrics() {
         tag="--"
     fi
 
-    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\",\"heimdall_url\":\"$heimdall_url\",\"test_coverage\":\"$test_coverage\"}"
+    output= "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\",\"heimdall_url\":\"$heimdall_url\",\"test_coverage\":\"$test_coverage\"}"
+
+    # Output only if it's valid JSON
+    if echo "$output" | jq empty >/dev/null 2>&1; then
+        echo "$output"
+    else
+        echo "⚠️ Skipped invalid JSON for $repo" >&2
+    fi
 }
 
 export -f fetch_metrics
