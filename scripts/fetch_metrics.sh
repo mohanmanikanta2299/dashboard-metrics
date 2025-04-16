@@ -145,19 +145,29 @@ fetch_metrics() {
                     coverage_file=$(find "$tmpdir" -type f -name "coverage.out" | head -n1)
 
                     if [[ -f "$coverage_file" ]]; then
-                        echo "📂 Contents of artifact:" >&2
                         echo "✅ Found coverage.out" >&2
                         echo "🔍 Contents of $coverage_file:" >&2
                         cat "$coverage_file"
 
-                        coverage_output=$(go tool cover -func="$coverage_file" 2>/dev/null | awk '/^total:/ { print $3 }')
-                        if [[ "$coverage_output" =~ ^[0-9]+\.[0-9]+%$ ]]; then
-                            test_coverage="$coverage_output"
+                        total=0
+                        covered=0
+                        while read -r line; do
+                           stmts=$(echo "$line" | awk '{print $3}')
+                           hits=$(echo "$line" | awk '{print $4}')
+                           total=$((total + stmts))
+                           if [[ "$hits" -gt 0 ]]; then
+                               covered=$((covered + stmts))
+                           fi
+                        done < "$coverage_file"
+
+                        if [[ "$total" -gt 0 ]]; then
+                            test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100 }")
                             echo "📊 Extracted coverage: $test_coverage" >&2
                         else
                             echo "⚠️ Invalid or missing total coverage in $coverage_file" >&2
-                            test_coverage="--"
                         fi
+                    else
+                       echo "⚠️ coverage.out not found" >&2
                     fi
                     rm -rf "$tmpdir"
                 fi
