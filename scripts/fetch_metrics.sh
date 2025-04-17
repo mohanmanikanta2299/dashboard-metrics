@@ -109,6 +109,7 @@ fetch_metrics() {
         fi
     fi
 
+    # Get Unit Test Coverage Percentage
     test_coverage="--"
 
     latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
@@ -117,7 +118,7 @@ fetch_metrics() {
                              | jq -e '[.[] | select(.merged_at != null)] | first // empty')
     
     if [[ -n "$latest_merged_pr" && "$latest_merged_pr" != "null" ]]; then
-        pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merge_commit_sha // empty')
+        pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.head.sha // empty')
 
         if [[ -n "$pr_merge_commit_sha" ]]; then
             run_id=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
