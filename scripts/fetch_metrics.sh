@@ -125,7 +125,7 @@ fetch_metrics() {
             [[ -z "$sha" ]] && continue
             run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                            -H "Accept: application/vnd.github.v3+json" \
-                           "https://api.github.com/repos/hashicorp/$repo/actions/runs?per_page=10" \
+                           "https://api.github.com/repos/hashicorp/$repo/actions/runs" \
                            | jq -r --arg sha "$sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")] | .[].id')
 
             for run_id in $run_ids; do
