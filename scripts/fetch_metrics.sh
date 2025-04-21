@@ -121,7 +121,7 @@ fetch_metrics() {
         head_sha=$(echo "$latest_merged_pr" | jq -r '.head.sha // empty')
         pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merged_commit_sha // empty')
 
-        for sha in "$merged_commit_sha" "$head_sha"; do
+        for sha in "$pr_merged_commit_sha" "$head_sha"; do
             [[ -z "$sha" ]] && continue
             run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                            -H "Accept: application/vnd.github.v3+json" \
