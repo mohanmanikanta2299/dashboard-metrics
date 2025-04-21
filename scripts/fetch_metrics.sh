@@ -121,12 +121,12 @@ fetch_metrics() {
         pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.head.sha // empty')
 
         if [[ -n "$pr_merge_commit_sha" ]]; then
-            run_id=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+            run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                            -H "Accept: application/vnd.github.v3+json" \
                            "https://api.github.com/repos/hashicorp/$repo/actions/runs?per_page=10" \
-                           | jq -e --arg sha "$pr_merge_commit_sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")] | .[0].id // empty')
+                           | jq -r --arg sha "$pr_merge_commit_sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")] | .[].id')
 
-            if [[ -n "$run_id" ]]; then
+            for run_id in $run_ids; do
                 artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                      -H "Accept: application/vnd.github.v3+json" \
                                      "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
@@ -155,11 +155,13 @@ fetch_metrics() {
 
                         if [[ "$total" -gt 0 ]]; then
                             test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100 }")
+                            rm -rf "$tmpdir"
+                            break
                         fi
                     fi
                     rm -rf "$tmpdir"
                 fi
-            fi
+            done
         fi
     fi
 
