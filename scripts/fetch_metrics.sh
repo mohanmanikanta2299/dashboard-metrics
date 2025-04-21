@@ -118,9 +118,11 @@ fetch_metrics() {
                              | jq -e '[.[] | select(.merged_at != null)] | first // empty')
     
     if [[ -n "$latest_merged_pr" && "$latest_merged_pr" != "null" ]]; then
-        pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.head.sha // empty')
+        head_sha=$(echo "$latest_merged_pr" | jq -r '.head.sha // empty')
+        pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merged_commit_sha // empty')
 
-        if [[ -n "$pr_merge_commit_sha" ]]; then
+        for sha in "$merged_commit_sha" "$head_sha"; do
+            [[ -z "$sha" ]] && continue
             run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                            -H "Accept: application/vnd.github.v3+json" \
                            "https://api.github.com/repos/hashicorp/$repo/actions/runs?per_page=10" \
@@ -156,13 +158,13 @@ fetch_metrics() {
                         if [[ "$total" -gt 0 ]]; then
                             test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100 }")
                             rm -rf "$tmpdir"
-                            break
+                            break 2
                         fi
                     fi
                     rm -rf "$tmpdir"
                 fi
             done
-        fi
+        done
     fi
 
     # Get the latest release version
