@@ -114,7 +114,7 @@ fetch_metrics() {
 
     latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
-                             "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc&per_page=10" \
+                             "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&direction=desc&per_page=10" \
                              | jq -e '[.[] | select(.merged_at != null)] | first // empty')
     
     if [[ -n "$latest_merged_pr" && "$latest_merged_pr" != "null" ]]; then
