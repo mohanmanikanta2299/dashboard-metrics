@@ -126,13 +126,13 @@ fetch_metrics() {
             run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                            -H "Accept: application/vnd.github.v3+json" \
                            "https://api.github.com/repos/hashicorp/$repo/actions/runs" \
-                           | jq -r --arg sha "$sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and .conclusion == "success")] | .[].id')
+                           | jq -r --arg sha "$sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed")] | .[].id')
 
             for run_id in $run_ids; do
                 artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                      -H "Accept: application/vnd.github.v3+json" \
                                      "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
-                                     | jq -e -r '.artifacts[] | select(.name | test("(?i)^coverage-report") or .name | test("(?i)^coverage-report-linux") or .name | test("(?i)^linux-test-results")) | .archive_download_url' \
+                                     | jq -e -r '.artifacts[] | select(.name | test("(?i)^coverage-report")) | .archive_download_url' \
                                      | head -n1)
 
                 if [[ -n "$artifact_url" ]]; then
