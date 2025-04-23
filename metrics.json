@@ -6,7 +6,9 @@
     "open_prs": 0,
     "triggered_on_push_or_pr": false,
     "release_version": "--",
-    "tag": "v0.5.0"
+    "tag": "v0.5.0",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/dawdle",
+    "test_coverage": "--"
   },
   {
     "repo": "go-cleanhttp",
@@ -15,70 +17,9 @@
     "open_prs": 2,
     "triggered_on_push_or_pr": true,
     "release_version": "v0.5.2",
-    "tag": "--"
-  },
-  {
-    "repo": "go-checkpoint",
-    "forked_from": "--",
-    "open_issues": 2,
-    "open_prs": 1,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "v0.5.0"
-  },
-  {
-    "repo": "dbassert",
-    "forked_from": "--",
-    "open_issues": 0,
-    "open_prs": 1,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "--"
-  },
-  {
-    "repo": "copywrite",
-    "forked_from": "--",
-    "open_issues": 11,
-    "open_prs": 20,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.22.0",
-    "tag": "--"
-  },
-  {
-    "repo": "cli",
-    "forked_from": "mitchellh/cli",
-    "open_issues": 0,
-    "open_prs": 3,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "v1.1.7"
-  },
-  {
-    "repo": "go-bexpr",
-    "forked_from": "--",
-    "open_issues": 8,
-    "open_prs": 10,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.1.14",
-    "tag": "--"
-  },
-  {
-    "repo": "go-eventlogger",
-    "forked_from": "--",
-    "open_issues": 1,
-    "open_prs": 6,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "v0.2.11"
-  },
-  {
-    "repo": "go-argmapper",
-    "forked_from": "--",
-    "open_issues": 2,
-    "open_prs": 6,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "v0.2.4"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-cleanhttp",
+    "test_coverage": "61.9%"
   },
   {
     "repo": "errwrap",
@@ -87,7 +28,31 @@
     "open_prs": 3,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
-    "tag": "v1.1.0"
+    "tag": "v1.1.0",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/errwrap",
+    "test_coverage": "69.6%"
+  },
+  {
+    "repo": "dbassert",
+    "forked_from": "--",
+    "open_issues": 0,
+    "open_prs": 1,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/dbassert",
+    "test_coverage": "80.3%"
+  },
+  {
+    "repo": "go-checkpoint",
+    "forked_from": "--",
+    "open_issues": 2,
+    "open_prs": 1,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "v0.5.0",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-checkpoint",
+    "test_coverage": "50.0%"
   },
   {
     "repo": "go-connlimit",
@@ -96,61 +61,75 @@
     "open_prs": 0,
     "triggered_on_push_or_pr": true,
     "release_version": "v0.3.1",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-connlimit",
+    "test_coverage": "88.7%"
   },
   {
-    "repo": "go-msgpack",
-    "forked_from": "ugorji/go",
+    "repo": "cli",
+    "forked_from": "mitchellh/cli",
     "open_issues": 0,
-    "open_prs": 0,
+    "open_prs": 3,
     "triggered_on_push_or_pr": true,
-    "release_version": "v2.1.3",
-    "tag": "--"
-  },
-  {
-    "repo": "go-hclog",
-    "forked_from": "--",
-    "open_issues": 3,
-    "open_prs": 7,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v1.6.3",
-    "tag": "--"
-  },
-  {
-    "repo": "go-immutable-radix",
-    "forked_from": "--",
-    "open_issues": 5,
-    "open_prs": 9,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v2.1.0",
-    "tag": "--"
-  },
-  {
-    "repo": "go-memdb",
-    "forked_from": "--",
-    "open_issues": 34,
-    "open_prs": 11,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v1.3.5",
-    "tag": "--"
-  },
-  {
-    "repo": "go-raftchunking",
-    "forked_from": "--",
-    "open_issues": 0,
-    "open_prs": 1,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.7.1",
-    "tag": "--"
+    "release_version": "--",
+    "tag": "v1.1.7",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/cli",
+    "test_coverage": "79.2%"
   },
   {
     "repo": "go-getter",
     "forked_from": "--",
     "open_issues": 135,
-    "open_prs": 42,
+    "open_prs": 43,
     "triggered_on_push_or_pr": true,
     "release_version": "v1.7.8",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-getter",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "go-eventlogger",
+    "forked_from": "--",
+    "open_issues": 1,
+    "open_prs": 7,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "v0.2.11",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-eventlogger",
+    "test_coverage": "87.7%"
+  },
+  {
+    "repo": "go-bexpr",
+    "forked_from": "--",
+    "open_issues": 8,
+    "open_prs": 9,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.1.14",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-bexpr",
+    "test_coverage": "80.4%"
+  },
+  {
+    "repo": "go-immutable-radix",
+    "forked_from": "--",
+    "open_issues": 5,
+    "open_prs": 10,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.1.0",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-immutable-radix",
+    "test_coverage": "94.9%"
+  },
+  {
+    "repo": "copywrite",
+    "forked_from": "--",
+    "open_issues": 11,
+    "open_prs": 20,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.22.0",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/copywrite",
+    "test_coverage": "25.4%"
   },
   {
     "repo": "go-multierror",
@@ -159,7 +138,31 @@
     "open_prs": 17,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
-    "tag": "v1.1.1"
+    "tag": "v1.1.1",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-multierror",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "go-argmapper",
+    "forked_from": "--",
+    "open_issues": 2,
+    "open_prs": 7,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "v0.2.4",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-argmapper",
+    "test_coverage": "77.2%"
+  },
+  {
+    "repo": "go-hclog",
+    "forked_from": "--",
+    "open_issues": 3,
+    "open_prs": 7,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.6.3",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-hclog",
+    "test_coverage": "80.3%"
   },
   {
     "repo": "go-plugin",
@@ -168,34 +171,9 @@
     "open_prs": 26,
     "triggered_on_push_or_pr": true,
     "release_version": "v1.6.3",
-    "tag": "--"
-  },
-  {
-    "repo": "go-discover",
-    "forked_from": "--",
-    "open_issues": 43,
-    "open_prs": 43,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "--"
-  },
-  {
-    "repo": "go-rate",
-    "forked_from": "--",
-    "open_issues": 0,
-    "open_prs": 0,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "--"
-  },
-  {
-    "repo": "go-slug",
-    "forked_from": "--",
-    "open_issues": 5,
-    "open_prs": 6,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.16.5",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-plugin",
+    "test_coverage": "--"
   },
   {
     "repo": "go-safetemp",
@@ -204,7 +182,9 @@
     "open_prs": 0,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
-    "tag": "v1.0.0"
+    "tag": "v1.0.0",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-safetemp",
+    "test_coverage": "80.0%"
   },
   {
     "repo": "go-rootcerts",
@@ -213,25 +193,53 @@
     "open_prs": 4,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
-    "tag": "v1.0.2"
+    "tag": "v1.0.2",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-rootcerts",
+    "test_coverage": "74.5%"
   },
   {
-    "repo": "go-sockaddr",
+    "repo": "go-discover",
     "forked_from": "--",
-    "open_issues": 13,
-    "open_prs": 7,
+    "open_issues": 41,
+    "open_prs": 43,
     "triggered_on_push_or_pr": true,
-    "release_version": "v1.0.7",
-    "tag": "--"
+    "release_version": "v1.0.0",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-discover",
+    "test_coverage": "13.4%"
   },
   {
-    "repo": "go-syslog",
+    "repo": "go-raftchunking",
     "forked_from": "--",
     "open_issues": 0,
-    "open_prs": 3,
+    "open_prs": 2,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.7.1",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-raftchunking",
+    "test_coverage": "57.1%"
+  },
+  {
+    "repo": "go-memdb",
+    "forked_from": "--",
+    "open_issues": 34,
+    "open_prs": 12,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.3.5",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-memdb",
+    "test_coverage": "88.6%"
+  },
+  {
+    "repo": "go-rate",
+    "forked_from": "--",
+    "open_issues": 0,
+    "open_prs": 1,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
-    "tag": "v1.0.0"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-rate",
+    "test_coverage": "94.5%"
   },
   {
     "repo": "go-uuid",
@@ -240,16 +248,9 @@
     "open_prs": 1,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
-    "tag": "v1.0.3"
-  },
-  {
-    "repo": "go-retryablehttp",
-    "forked_from": "--",
-    "open_issues": 49,
-    "open_prs": 22,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "v0.7.7"
+    "tag": "v1.0.3",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-uuid",
+    "test_coverage": "67.9%"
   },
   {
     "repo": "go-version",
@@ -258,70 +259,42 @@
     "open_prs": 21,
     "triggered_on_push_or_pr": true,
     "release_version": "v1.7.0",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-version",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "go-retryablehttp",
+    "forked_from": "--",
+    "open_issues": 49,
+    "open_prs": 24,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "v0.7.7",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-retryablehttp",
+    "test_coverage": "78.8%"
+  },
+  {
+    "repo": "go-syslog",
+    "forked_from": "--",
+    "open_issues": 0,
+    "open_prs": 3,
+    "triggered_on_push_or_pr": true,
+    "release_version": "--",
+    "tag": "v1.0.0",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-syslog",
+    "test_coverage": "0.0%"
   },
   {
     "repo": "golang-lru",
     "forked_from": "--",
     "open_issues": 30,
-    "open_prs": 18,
+    "open_prs": 19,
     "triggered_on_push_or_pr": true,
     "release_version": "v2.0.7",
-    "tag": "--"
-  },
-  {
-    "repo": "hil",
-    "forked_from": "--",
-    "open_issues": 6,
-    "open_prs": 7,
-    "triggered_on_push_or_pr": true,
-    "release_version": "--",
-    "tag": "--"
-  },
-  {
-    "repo": "memberlist",
-    "forked_from": "--",
-    "open_issues": 74,
-    "open_prs": 30,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.5.3",
-    "tag": "--"
-  },
-  {
-    "repo": "mdns",
-    "forked_from": "--",
-    "open_issues": 22,
-    "open_prs": 18,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v1.0.6",
-    "tag": "--"
-  },
-  {
-    "repo": "net-rpc-msgpackrpc",
-    "forked_from": "--",
-    "open_issues": 0,
-    "open_prs": 0,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v2.0.1",
-    "tag": "--"
-  },
-  {
-    "repo": "hcl",
-    "forked_from": "--",
-    "open_issues": 170,
-    "open_prs": 57,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v2.23.0",
-    "tag": "--"
-  },
-  {
-    "repo": "mql",
-    "forked_from": "--",
-    "open_issues": 1,
-    "open_prs": 2,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.1.4",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/golang-lru",
+    "test_coverage": "92.9%"
   },
   {
     "repo": "jsonapi",
@@ -330,52 +303,64 @@
     "open_prs": 2,
     "triggered_on_push_or_pr": true,
     "release_version": "v1.5.0",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/jsonapi",
+    "test_coverage": "--"
   },
   {
-    "repo": "raft-autopilot",
-    "forked_from": "--",
-    "open_issues": 4,
-    "open_prs": 8,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.3.0",
-    "tag": "--"
-  },
-  {
-    "repo": "raft",
-    "forked_from": "--",
-    "open_issues": 31,
-    "open_prs": 14,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v1.7.3",
-    "tag": "--"
-  },
-  {
-    "repo": "raft-boltdb",
+    "repo": "hil",
     "forked_from": "--",
     "open_issues": 6,
-    "open_prs": 3,
+    "open_prs": 7,
     "triggered_on_push_or_pr": true,
-    "release_version": "v2.3.1",
-    "tag": "--"
-  },
-  {
-    "repo": "raft-wal",
-    "forked_from": "--",
-    "open_issues": 2,
-    "open_prs": 4,
-    "triggered_on_push_or_pr": true,
-    "release_version": "v0.4.2",
-    "tag": "--"
-  },
-  {
-    "repo": "vic",
-    "forked_from": "vmware/vic",
-    "open_issues": 0,
-    "open_prs": 1,
-    "triggered_on_push_or_pr": false,
     "release_version": "--",
-    "tag": "v1.5.0"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/hil",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "mql",
+    "forked_from": "--",
+    "open_issues": 1,
+    "open_prs": 2,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.1.5",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/mql",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "go-slug",
+    "forked_from": "--",
+    "open_issues": 5,
+    "open_prs": 6,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.16.5",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-slug",
+    "test_coverage": "72.5%"
+  },
+  {
+    "repo": "net-rpc-msgpackrpc",
+    "forked_from": "--",
+    "open_issues": 0,
+    "open_prs": 0,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.0.1",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/net-rpc-msgpackrpc",
+    "test_coverage": "0.0%"
+  },
+  {
+    "repo": "mdns",
+    "forked_from": "--",
+    "open_issues": 22,
+    "open_prs": 18,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.0.6",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/mdns",
+    "test_coverage": "68.1%"
   },
   {
     "repo": "vagrant-plugin-sdk",
@@ -384,7 +369,75 @@
     "open_prs": 5,
     "triggered_on_push_or_pr": true,
     "release_version": "--",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/vagrant-plugin-sdk",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "raft-wal",
+    "forked_from": "--",
+    "open_issues": 2,
+    "open_prs": 3,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.4.2",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/raft-wal",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "vic",
+    "forked_from": "vmware/vic",
+    "open_issues": 0,
+    "open_prs": 2,
+    "triggered_on_push_or_pr": false,
+    "release_version": "--",
+    "tag": "v1.5.0",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/vic",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "raft-boltdb",
+    "forked_from": "--",
+    "open_issues": 6,
+    "open_prs": 3,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.3.1",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/raft-boltdb",
+    "test_coverage": "68.9%"
+  },
+  {
+    "repo": "go-sockaddr",
+    "forked_from": "--",
+    "open_issues": 13,
+    "open_prs": 8,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.0.7",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-sockaddr",
+    "test_coverage": "67.0%"
+  },
+  {
+    "repo": "go-metrics",
+    "forked_from": "--",
+    "open_issues": 32,
+    "open_prs": 26,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.5.4",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-metrics",
+    "test_coverage": "--"
+  },
+  {
+    "repo": "raft-autopilot",
+    "forked_from": "--",
+    "open_issues": 4,
+    "open_prs": 8,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.3.0",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/raft-autopilot",
+    "test_coverage": "86.9%"
   },
   {
     "repo": "raft-snapshot",
@@ -393,25 +446,53 @@
     "open_prs": 5,
     "triggered_on_push_or_pr": true,
     "release_version": "v1.0.2",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/raft-snapshot",
+    "test_coverage": "66.4%"
   },
   {
     "repo": "yamux",
     "forked_from": "--",
-    "open_issues": 13,
+    "open_issues": 14,
     "open_prs": 12,
     "triggered_on_push_or_pr": true,
     "release_version": "v0.1.2",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/yamux",
+    "test_coverage": "83.2%"
   },
   {
-    "repo": "go-metrics",
+    "repo": "memberlist",
     "forked_from": "--",
-    "open_issues": 32,
-    "open_prs": 26,
-    "triggered_on_push_or_pr": false,
-    "release_version": "v0.5.4",
-    "tag": "--"
+    "open_issues": 74,
+    "open_prs": 33,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v0.5.3",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/memberlist",
+    "test_coverage": "81.7%"
+  },
+  {
+    "repo": "go-msgpack",
+    "forked_from": "ugorji/go",
+    "open_issues": 0,
+    "open_prs": 2,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.1.3",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/go-msgpack",
+    "test_coverage": "69.3%"
+  },
+  {
+    "repo": "raft",
+    "forked_from": "--",
+    "open_issues": 31,
+    "open_prs": 14,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v1.7.3",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/raft",
+    "test_coverage": "44.3%"
   },
   {
     "repo": "serf",
@@ -420,6 +501,19 @@
     "open_prs": 37,
     "triggered_on_push_or_pr": true,
     "release_version": "v0.10.2",
-    "tag": "--"
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/serf",
+    "test_coverage": "76.1%"
+  },
+  {
+    "repo": "hcl",
+    "forked_from": "--",
+    "open_issues": 170,
+    "open_prs": 57,
+    "triggered_on_push_or_pr": true,
+    "release_version": "v2.23.0",
+    "tag": "--",
+    "heimdall_url": "https://heimdall.hashicorp.services/site/assets/hcl",
+    "test_coverage": "11.8%"
   }
 ]
