@@ -132,7 +132,7 @@ fetch_metrics() {
                 artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                      -H "Accept: application/vnd.github.v3+json" \
                                      "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
-                                     | jq -e -r '.artifacts[] | select(.name | test("(?i)^coverage-report|linux-test-results")) | .archive_download_url' \
+                                     | jq -e -r '.artifacts[] | select(.name | test("(?i)^coverage-report|^linux-test-results")) | .archive_download_url' \
                                      | head -n1)
 
                 if [[ -n "$artifact_url" ]]; then
@@ -141,7 +141,7 @@ fetch_metrics() {
                           -H "Accept: application/vnd.github.v3+json" \
                           "$artifact_url" -o "$tmpdir/artifact.zip"
                     unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
-                    coverage_file=$(find "$tmpdir" -type f -name "coverage.out|linux_cov.part|coverage-linux.out" | head -n1)
+                    coverage_file=$(find "$tmpdir" -type f -name "coverage.out" || -name "linux_cov.part" || -name "coverage-linux.out" | head -n1)
 
                     if [[ -f "$coverage_file" ]]; then
                         total=0
