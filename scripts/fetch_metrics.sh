@@ -114,7 +114,7 @@ fetch_metrics() {
 
     latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
-                             "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&direction=desc&per_page=10" \
+                             "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc" \
                              | jq -e '[.[] | select(.merged_at != null)] | first // empty')
     
     if [[ -n "$latest_merged_pr" && "$latest_merged_pr" != "null" ]]; then
@@ -147,8 +147,8 @@ fetch_metrics() {
                         total=0
                         covered=0
                         while read -r line; do
-                           stmts=$(echo "$line" | awk '{print $2}')
-                           hits=$(echo "$line" | awk '{print $3}')
+                           stmts=$(echo "$line" | awk '{print $3}')
+                           hits=$(echo "$line" | awk '{print $4}')
                            total=$((total + stmts))
                            if [[ "$hits" -gt 0 ]]; then
                                covered=$((covered + stmts))
