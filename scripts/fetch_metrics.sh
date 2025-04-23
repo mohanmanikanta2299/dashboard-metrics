@@ -141,7 +141,7 @@ fetch_metrics() {
                           -H "Accept: application/vnd.github.v3+json" \
                           "$artifact_url" -o "$tmpdir/artifact.zip"
                     unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
-                    coverage_file=$(find "$tmpdir" -type f \( -name "coverage.out" -o -name "coverage-linux.out" -o -name "linux_cov.part"\) | head -n1)
+                    coverage_file=$(find "$tmpdir" -type f \( -name "coverage.out" -o -name "coverage-*.out" -o -name "linux_cov.part" \) | head -n1)
 
                     if [[ -f "$coverage_file" ]]; then
                         total=0
