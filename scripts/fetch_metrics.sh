@@ -117,7 +117,7 @@ fetch_metrics() {
                              "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc" \
                              | jq -e '[.[] | select(.merged_at != null)] | first')
 
-    if [[ "$repo" == "go-plugin" && "$repo" == "go-version"]]; then
+    if [[ "$repo" == "go-plugin" || "$repo" == "go-version" ]]; then
         latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
                              "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&direction=desc" \
