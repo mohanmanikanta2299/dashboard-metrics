@@ -121,7 +121,7 @@ fetch_metrics() {
             test_coverage=$(curl -s "$content" | tail -n 1 | cut -d',' -f2)
         fi
     fi
-    else
+    elif [[ "$repo" != "mql" ]]; then
         if [[ "$repo" == "go-plugin" || "$repo" == "go-version" ]]; then
             latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                     -H "Accept: application/vnd.github.v3+json" \
