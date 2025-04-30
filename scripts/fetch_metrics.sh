@@ -174,6 +174,17 @@ fetch_metrics() {
         done
     fi
 
+    if [[ "$repo" == "mql" ]]; then
+        content=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                         -H "Accept: application/vnd.github.v3+json" \
+                         "https://api.github.com/repos/hashicorp/$repo/contents/coverage?ref=main" \
+                         | jq -r '[.[] | select(.name == "coverage.log")] | .download_url')
+        
+        if [[ -n "$content" && "$content" != "null" ]]; then
+            test_coverage=$(tail -n 1 "$content" | cut -d',' -f2)
+        fi
+    fi
+
     # Get the latest release version
     release_response=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                              -H "Accept: application/vnd.github.v3+json" \
