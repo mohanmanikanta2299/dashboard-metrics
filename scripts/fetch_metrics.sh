@@ -120,7 +120,6 @@ fetch_metrics() {
         if [[ -n "$content" && "$content" != "null" ]]; then
             test_coverage=$(curl -s "$content" | tail -n 1 | cut -d',' -f2)
         fi
-    fi
     elif [[ "$repo" != "mql" ]]
     then
         if [[ "$repo" == "go-plugin" || "$repo" == "go-version" ]]; then
@@ -128,7 +127,6 @@ fetch_metrics() {
                                     -H "Accept: application/vnd.github.v3+json" \
                                     "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&direction=desc" \
                                     | jq -e '[.[] | select(.merged_at != null)] | first')
-        fi
         else
            latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                     -H "Accept: application/vnd.github.v3+json" \
