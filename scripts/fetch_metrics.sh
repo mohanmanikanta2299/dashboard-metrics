@@ -178,10 +178,10 @@ fetch_metrics() {
         content=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                          -H "Accept: application/vnd.github.v3+json" \
                          "https://api.github.com/repos/hashicorp/$repo/contents/coverage?ref=main" \
-                         | jq -r '[.[] | select(.name == "coverage.log")] | .download_url')
+                         | jq -r '.[] | select(.name == "coverage.log") | .download_url')
         
         if [[ -n "$content" && "$content" != "null" ]]; then
-            test_coverage=$(tail -n 1 "$content" | cut -d',' -f2)
+            test_coverage=$(curl -s "$content" | tail -n 1 | cut -d',' -f2)
         fi
     fi
 
