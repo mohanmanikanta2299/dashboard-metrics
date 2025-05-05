@@ -118,7 +118,7 @@ fetch_metrics() {
                          | jq -r '.[] | select(.name == "coverage.log") | .download_url')
         
         if [[ -n "$content" && "$content" != "null" ]]; then
-            test_coverage=$(curl -s "$content" | tail -n 1 | cut -d',' -f2)
+            test_coverage="$(curl -s "$content" | tail -n 1 | cut -d',' -f2)%"
         fi
     elif [[ "$repo" != "mql" ]]
     then
