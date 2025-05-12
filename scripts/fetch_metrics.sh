@@ -120,69 +120,48 @@ fetch_metrics() {
         if [[ -n "$content" && "$content" != "null" ]]; then
             test_coverage="$(curl -s "$content" | tail -n 1 | cut -d',' -f2)%"
         fi
-    elif [[ "$repo" != "mql" ]]
-    then
-        if [[ "$repo" == "go-plugin" || "$repo" == "go-version" ]]; then
-            latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                    -H "Accept: application/vnd.github.v3+json" \
-                                    "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&direction=desc" \
-                                    | jq -e '[.[] | select(.merged_at != null)] | first')
-        else
-           latest_merged_pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                    -H "Accept: application/vnd.github.v3+json" \
-                                    "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc" \
-                                    | jq -e '[.[] | select(.merged_at != null)] | first')
-        fi
+    else
+       run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                     -H "Accept: application/vnd.github.v3+json" \
+                     "https://api.github.com/repos/hashicorp/$repo/actions/runs?branch=main&status=completed&per_page=5" \
+                     | jq -r '.workflow_runs[].id')
+        
+        for run_id in $run_ids; do
+            artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                               -H "Accept: application/vnd.github.v3+json" \
+                               "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
+                               | jq -e -r '.artifacts[] | select(.name | test("(?i)^(coverage-report|linux-test-results)")) | .archive_download_url' \
+                               | head -n1)
+            if [[ -n "$artifact_url" ]]; then
+                tmpdir=$(mktemp -d)
+                curl -s -H -L "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                       -H "Accept: application/vnd.github.v3+json" \
+                       "$artifact_url" -o "$tmpdir/artifact.zip"
+                
+                if unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"; then
+                    coverage_file=$(find "$tmpdir" -type f \( -name "coverage.out" -o -name "coverage-*.out" -o -name "linux_cov.part" \) | head -n1)
+                    if [[ -f "$coverage_file" ]]; then
+                        total=0
+                        covered=0
+                        while read -r line; do
+                           stmts=$(echo "$line" | awk '{print $2}')
+                           hits=$(echo "$line" | awk '{print $3}')
+                           total=$((total+stmts))
+                           if [[ "$hits" -gt 0 ]]; then
+                               covered=$((covered+stmts))
+                           fi
+                        done < "$coverage_file"
 
-        if [[ -n "$latest_merged_pr" && "$latest_merged_pr" != "null" ]]; then
-            head_sha=$(echo "$latest_merged_pr" | jq -r '.head.sha // empty')
-            pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merged_commit_sha // empty')
-
-            for sha in "$pr_merge_commit_sha" "$head_sha"; do
-                [[ -z "$sha" ]] && continue
-                run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                -H "Accept: application/vnd.github.v3+json" \
-                                "https://api.github.com/repos/hashicorp/$repo/actions/runs" \
-                                | jq -r --arg sha "$sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed")] | .[].id')
-
-                for run_id in $run_ids; do
-                    artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                         -H "Accept: application/vnd.github.v3+json" \
-                                         "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
-                                         | jq -e -r '.artifacts[] | select(.name | test("(?i)^(coverage-report|linux-test-results)")) | .archive_download_url' \
-                                         | head -n1)
-
-                    if [[ -n "$artifact_url" ]]; then
-                        tmpdir=$(mktemp -d)
-                        curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                              -H "Accept: application/vnd.github.v3+json" \
-                              "$artifact_url" -o "$tmpdir/artifact.zip"
-                        unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
-                        coverage_file=$(find "$tmpdir" -type f \( -name "coverage.out" -o -name "coverage-*.out" -o -name "linux_cov.part" \) | head -n1)
-
-                        if [[ -f "$coverage_file" ]]; then
-                            total=0
-                            covered=0
-                            while read -r line; do
-                               stmts=$(echo "$line" | awk '{print $2}')
-                               hits=$(echo "$line" | awk '{print $3}')
-                               total=$((total + stmts))
-                               if [[ "$hits" -gt 0 ]]; then
-                                   covered=$((covered + stmts))
-                               fi
-                            done < "$coverage_file"
-
-                            if [[ "$total" -gt 0 ]]; then
-                                test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100 }")
-                                rm -rf "$tmpdir"
-                                break 2
-                            fi
+                        if [[ "$total" -gt 0 ]]; then
+                            test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100}")
+                            rm -rf "$tmpdir"
+                            break
                         fi
-                        rm -rf "$tmpdir"
                     fi
-                done
-            done
-        fi
+                fi
+                rm -rf "$tmpdir"
+            fi
+        done
     fi
 
     # Get the latest release version
