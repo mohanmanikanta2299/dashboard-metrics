@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-REPO_FILE="repos.txt"
-OUTPUT_FILE="metrics.json"
 NUM_JOBS=10  # Number of parallel jobs
 
 # Ensure repo file exists
@@ -21,7 +19,7 @@ fetch_metrics() {
 
     # Validate response
     if [[ -z "$response" || "$response" == "null" ]]; then
-        echo "{\"repo\":\"$repo\",\"forked_from\":\"--\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\"}"
+        echo "{\"repo\":\"$repo\",\"forked_from\":\"--\",\"open_issues\":0,\"open_prs\":0,\"triggered_on_push_or_pr\":false,\"release_version\":\"--\",\"tag\":\"--\",\"test_coverage\":\"--\"}"
         return
     fi
 
@@ -85,24 +83,103 @@ fetch_metrics() {
             for url in "${workflow_urls[@]}"; do
                 yaml_content=$(curl -s "$url")
 
+                # if echo "$yaml_content" | yq eval -e '
+                #  (
+                #     (.on == "push") or
+                #     (.on == "pull_request") or
+                #     ( (.on | type == "!!seq") and (.on[] == "push" or .on[] == "pull_request") ) or
+                #     ( (.on | type == "!!map") and (has("push") or has("pull_request")) )
+                #  )
+                # ' - >/dev/null 2>&1; then
+                #     triggered_on_push_or_pr=true
+                #     break
+                # fi
+
                 # Check if the workflow triggers on push or pull_request
-                if echo "$yaml_content" | yq eval -e '
-                 (
-                    (.on == "push") or
-                    (.on == "pull_request") or
-                    ( (.on | type == "!!seq") and (.on[] == "push" or .on[] == "pull_request") ) or
-                    ( (.on | type == "!!map") and (has("push") or has("pull_request")) )
-                 )
-                ' - >/dev/null 2>&1; then
-                    triggered_on_push_or_pr=true
-                    break
-                fi
 
                 if echo "$yaml_content" | grep -E '^\s*on:\s*$' >/dev/null || \
                    echo "$yaml_content" | grep -E '^\s*on:\s*(push|pull_request|\[.*(push|pull_request).*\])' >/dev/null; then
                     triggered_on_push_or_pr=true
                     break
                 fi
+            done
+        fi
+    fi
+
+    # Get Unit Test Coverage Percentage
+    test_coverage="--"
+    if [[ "$repo" == "mql" ]]; then
+        content=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                         -H "Accept: application/vnd.github.v3+json" \
+                         "https://api.github.com/repos/hashicorp/$repo/contents/coverage?ref=main" \
+                         | jq -r '.[] | select(.name == "coverage.log") | .download_url')
+        
+        if [[ -n "$content" && "$content" != "null" ]]; then
+            test_coverage="$(curl -s "$content" | tail -n 1 | cut -d',' -f2)%"
+        fi
+    else
+        if [[ "$repo" == "go-plugin" || "$repo" == "go-version" ]]; then
+            pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&direction=desc")
+        else
+           pr=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        "https://api.github.com/repos/hashicorp/$repo/pulls?state=closed&sort=updated&direction=desc")
+                                    
+        fi
+
+        if [[ -n "$pr" && "$pr" != "null" ]]; then
+            latest_merged_pr=$(echo "$pr" | jq '[.[] | select(.merged_at != null)] | first // empty')
+        fi
+
+        if [[ -n "$latest_merged_pr" && "$latest_merged_pr" != "null" ]]; then
+            head_sha=$(echo "$latest_merged_pr" | jq -r '.head.sha // empty')
+            pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merged_commit_sha // empty')
+
+            for sha in "$pr_merge_commit_sha" "$head_sha"; do
+                [[ -z "$sha" ]] && continue
+                run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                                -H "Accept: application/vnd.github.v3+json" \
+                                "https://api.github.com/repos/hashicorp/$repo/actions/runs" \
+                                | jq -r --arg sha "$sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed")] | .[].id')
+
+                for run_id in $run_ids; do
+                    artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                                         -H "Accept: application/vnd.github.v3+json" \
+                                         "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
+                                         | jq -e -r '.artifacts[] | select(.name | test("(?i)^(coverage-report|linux-test-results)")) | .archive_download_url' \
+                                         | head -n1)
+
+                    if [[ -n "$artifact_url" ]]; then
+                        tmpdir=$(mktemp -d)
+                        curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                              -H "Accept: application/vnd.github.v3+json" \
+                              "$artifact_url" -o "$tmpdir/artifact.zip"
+                        unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
+                        coverage_file=$(find "$tmpdir" -type f \( -name "coverage.out" -o -name "coverage-*.out" -o -name "linux_cov.part" \) | head -n1)
+
+                        if [[ -f "$coverage_file" ]]; then
+                            total=0
+                            covered=0
+                            while read -r line; do
+                               stmts=$(echo "$line" | awk '{print $2}')
+                               hits=$(echo "$line" | awk '{print $3}')
+                               total=$((total + stmts))
+                               if [[ "$hits" -gt 0 ]]; then
+                                   covered=$((covered + stmts))
+                               fi
+                            done < "$coverage_file"
+
+                            if [[ "$total" -gt 0 ]]; then
+                                test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100 }")
+                                rm -rf "$tmpdir"
+                                break 2
+                            fi
+                        fi
+                        rm -rf "$tmpdir"
+                    fi
+                done
             done
         fi
     fi
@@ -126,16 +203,12 @@ fetch_metrics() {
         tag="--"
     fi
 
-    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\"}"
+    echo "{\"repo\":\"$repo\",\"forked_from\":\"$forked_from\",\"open_issues\":$actual_issues,\"open_prs\":$pr_count,\"triggered_on_push_or_pr\":$triggered_on_push_or_pr,\"release_version\":\"$release_version\",\"tag\":\"$tag\",\"test_coverage\":\"$test_coverage\"}"
 }
 
 export -f fetch_metrics
 
 # Use xargs for parallel execution
-{
-    echo -n "["
-    cat "$REPO_FILE" | xargs -I{} -P $NUM_JOBS bash -c 'fetch_metrics "$@"' _ {} | paste -sd "," -
-    echo "]"
-} | jq '.' > "$OUTPUT_FILE"
+cat "$REPO_FILE" | xargs -I{} -P $NUM_JOBS bash -c 'fetch_metrics "$@"' _ {} | jq --slurp . - > "$OUTPUT_FILE"
 
 echo "Metrics saved to $OUTPUT_FILE"

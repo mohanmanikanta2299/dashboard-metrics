@@ -1,8 +1,6 @@
 name: Update Repository Metrics
 
 on:
-  schedule:
-    - cron: '0 10 * * *'  # Runs every day
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
@@ -15,7 +13,7 @@ jobs:
 
     steps:
       - name: Create GH App Token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547
         id: app-token
         with:
           # required
@@ -23,7 +21,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           token: ${{ steps.app-token.outputs.token }}
           ref: ${{ github.head_ref }}
@@ -33,7 +31,7 @@ jobs:
       - name: Set Up Environment Variables
         run: |
           echo "REPO_FILE=repos.txt" >> $GITHUB_ENV
-          echo "OUTPUT_FILE=metrics.json" >> $GITHUB_ENV
+          echo "OUTPUT_FILE=docs/metrics.json" >> $GITHUB_ENV
 
       - name: Set Branch Name
         run: echo "branch_name=metrics/update-metrics-$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
@@ -65,7 +63,7 @@ jobs:
       - name: Check for Changes
         id: check_changes
         run: |
-          if git diff --quiet metrics.json; then
+          if git diff --quiet docs/metrics.json; then
             echo "No changes detected. Skipping PR creation."
             echo "CHANGED=false" >> $GITHUB_ENV
           else

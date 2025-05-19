@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GitHub Repo Metrics</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <h2>GitHub Repository Metrics</h2>
+
+  <div class="controls">
+    <button id="darkToggle">☀️</button>
+    <button id="downloadCSV">⬇️ Download CSV</button>
+    <a href="https://hashicorp.atlassian.net/issues/SECVULN-11943?jql=project%20%3D%20Vulnerabilities%20and%20%28labels%20%21%3D%20tool-name%3ATrivy_Scanner%20or%20labels%20is%20EMPTY%29%20and%20issuetype%20%21%3D%20%22GitHub%20Dependabot%20Issue%22%20AND%20Status%20NOT%20IN%20%28Fixed%2C%20%22Dismissed%20-%20False%20Positive%22%2C%20%22Dismissed%20-%20Won%27t%20Fix%22%29%20AND%20%28labels%20IN%28repo%3Acli%2C%20repo%3Acopywrite%2C%20repo%3Adawdle%2C%20repo%3Adbassert%2C%20repo%3Aerrwrap%2C%20repo%3Aeventlogger%2C%20repo%3Ago-argmapper%2C%20repo%3Ago-bexpr%2C%20repo%3Ago-checkpoint%2C%20repo%3Ago-cleanhttp%2C%20repo%3Ago-connlimit%2C%20repo%3Ago-discover%2C%20repo%3Ago-getter%2C%20repo%3Ago-hclog%2C%20repo%3Ago-immutable-radix%2C%20repo%3Ago-memdb%2C%20repo%3Ago-msgpack%2C%20repo%3Ago-multierror%2C%20repo%3Ago-plugin%2C%20repo%3Ago-raftchunking%2C%20repo%3Ago-rate%2C%20repo%3Ago-retryablehttp%2C%20repo%3Ago-rootcerts%2C%20repo%3Ago-safetemp%2C%20repo%3Ago-slug%2C%20repo%3Ago-sockaddr%2C%20repo%3Ago-syslog%2C%20repo%3Ago-uuid%2C%20repo%3Ago-version%2C%20repo%3Agolang-lru%2C%20repo%3Ahcl%2C%20repo%3Ahil%2C%20repo%3Ajsonapi%2C%20repo%3Amdns%2C%20repo%3Amemberlist%2C%20repo%3Amql%2C%20repo%3Anet-rpc-msgpackrpc%2C%20repo%3Araft%2C%20repo%3Araft-autopilot%2C%20repo%3Araft-boltdb%2C%20repo%3Araft-wal%2C%20repo%3Avagrant-plugin-sdk%2C%20repo%3Avic%2C%20repo%3Ayamux%2C%20repo%3Ago-metrics%2C%20repo%3Aserf%2C%20repo%3Ago-blob-fetcher%2C%20repo%3Ago-service%2C%20repo%3Ahcp-okta%2C%20repo%3Aocsql%2C%20repo%3Araft-autopilot-enterprise%2C%20repo%3Araft-snapshotagent%2C%20repo%3Astoragelocker%2C%20repo%3Acopyright-notice-automation%2C%20repo%3Aoss-compliance-scanning%29%20or%20component%3D%27IP%20Compliance%20%26%20Assurance%27%29%20ORDER%20BY%20due%20ASC%2C%20priority%20DESC" target="_blank" class="cve-link">🛡️ CVEs</a>
+  </div>
+
+  <table id="repoTable">
+    <thead>
+      <tr>
+        <th data-key="repo">Repository</th>
+        <th data-key="forked_from">Forked From</th>
+        <th data-key="open_issues">Open Issues</th>
+        <th data-key="open_prs">Open PRs</th>
+        <th data-key="triggered_on_push_or_pr">CI Enabled</th>
+        <th data-key="release_version">Latest Release</th>
+        <th data-key="tag">Latest Tag</th>
+        <th data-key="test_coverage">UTC Percentage</th>
+        <th data-key="heimdall_url">Heimdall Asset</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="script.js"></script>
+
+  <footer class="footer">
+    <p>
+      Built with ❤️ using the GitHub API & styled with HashiCorp vibes.
+    </p>
+  </footer>
+
+</body>
+</html>

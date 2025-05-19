@@ -198,3 +198,31 @@ body.dark td a:hover {
   font-size: 14px;
   color: #666;
 }
+
+.controls .cve-link {
+  display: inline-block;
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 18px;
+  margin-left: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.controls .cve-link:hover {
+  background-color: #222;
+  transform: translateY(-1px);
+}
+
+body.dark .controls .cve-link {
+  background-color: #222;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+body.dark .controls .cve-link:hover {
+  background-color: #444;
+}

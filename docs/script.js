@@ -21,10 +21,10 @@ async function loadMetrics() {
 
 function renderTable(data) {
   const tableBody = document.querySelector("#repoTable tbody");
-  tableBody.innerHTML = "";
+  let rows = "";
 
   data.forEach(repo => {
-    const row = `
+    rows += `
       <tr>
         <td>${repo.repo}</td>
         <td>${repo.forked_from}</td>
@@ -33,10 +33,12 @@ function renderTable(data) {
         <td>${repo.triggered_on_push_or_pr ? "✅" : "❌"}</td>
         <td>${repo.release_version}</td>
         <td>${repo.tag}</td>
+        <td>${repo.test_coverage}</td>
         <td><a href="${repo.heimdall_url}" target="_blank">View ↗</a></td>
       </tr>`;
-    tableBody.innerHTML += row;
   });
+
+  tableBody.innerHTML = rows;
 }
 
 function sortByColumn(key) {
@@ -77,7 +79,7 @@ function updateSortIndicators() {
 function downloadCSV() {
   let csv = "Repository,Forked From,Open Issues,Open PRs,CI Enabled,Latest Release Version,Latest Tag,Heimdall Asset URL\n";
   metricsData.forEach(repo => {
-    csv += `"${repo.repo}","${repo.forked_from || "-"}",${repo.open_issues},${repo.open_prs},${repo.triggered_on_push_or_pr ? "Yes" : "No"},"${repo.release_version || "-"}","${repo.tag || "-"}","${repo.heimdall_url}"\n`;
+    csv += `"${repo.repo}","${repo.forked_from || "-"}",${repo.open_issues},${repo.open_prs},${repo.triggered_on_push_or_pr ? "Yes" : "No"},"${repo.release_version || "-"}","${repo.tag || "-"}","${repo.test_coverage || "-"}","${repo.heimdall_url}"\n`;
   });
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
