@@ -9,6 +9,10 @@ if [[ ! -f "$REPO_FILE" ]]; then
     exit 1
 fi
 
+PREV_FILE="/tmp/prev_metrics.json"
+cp "$OUTPUT_FILE" "$PREV_FILE" 2>/dev/null || true
+export PREV_FILE
+
 fetch_metrics() {
     repo=$1
 
@@ -130,58 +134,84 @@ fetch_metrics() {
         fi
 
         if [[ -n "$pr" && "$pr" != "null" ]]; then
-            latest_merged_pr=$(echo "$pr" | jq '[.[] | select(.merged_at != null)] | first // empty')
+            latest_merged_pr=$(echo "$pr" | jq '[.[] | select(.merged_at != null and .user.login != "dependabot[bot]" and .merged_by.login != "dependabot[bot]")][0]')
         fi
 
         if [[ -n "$latest_merged_pr" && "$latest_merged_pr" != "null" ]]; then
             head_sha=$(echo "$latest_merged_pr" | jq -r '.head.sha // empty')
             pr_merge_commit_sha=$(echo "$latest_merged_pr" | jq -r '.merged_commit_sha // empty')
 
-            for sha in "$pr_merge_commit_sha" "$head_sha"; do
+            for sha in "$head_sha" "$pr_merge_commit_sha"; do
                 [[ -z "$sha" ]] && continue
-                run_ids=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+
+                page_no=1
+                artifact_found=false
+                while [[ "$artifact_found" == false ]]; do
+                   res=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
                                 -H "Accept: application/vnd.github.v3+json" \
-                                "https://api.github.com/repos/hashicorp/$repo/actions/runs" \
-                                | jq -r --arg sha "$sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed")] | .[].id')
+                                "https://api.github.com/repos/hashicorp/$repo/actions/runs?per_page=100&page=$page_no")
+                   run_ids=$(echo "$res" | jq -r --arg sha "$sha" '[.workflow_runs[] | select(.head_sha == $sha and .status == "completed" and (.event == "push" or .event == "pull_request"))] | .[].id')
+                   for run_id in $run_ids; do
+                       artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                                            -H "Accept: application/vnd.github.v3+json" \
+                                            "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
+                                            | jq -e -r '.artifacts[] | select(.name | test("(?i)^(coverage-report|linux-test-results)")) | .archive_download_url' \
+                                            | head -n1)
 
-                for run_id in $run_ids; do
-                    artifact_url=$(curl -s -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                                         -H "Accept: application/vnd.github.v3+json" \
-                                         "https://api.github.com/repos/hashicorp/$repo/actions/runs/$run_id/artifacts" \
-                                         | jq -e -r '.artifacts[] | select(.name | test("(?i)^(coverage-report|linux-test-results)")) | .archive_download_url' \
-                                         | head -n1)
+                       if [[ -n "$artifact_url" ]]; then
+                           tmpdir=$(mktemp -d)
+                           curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
+                                 -H "Accept: application/vnd.github.v3+json" \
+                                 "$artifact_url" -o "$tmpdir/artifact.zip"
+                           if ! unzip -q "$tmpdir/artifact.zip" -d "$tmpdir" 2> "$tmpdir/unzip_error.log"; then
+                              if grep -q "End-of-central-directory signature not found" "$tmpdir/unzip_error.log"; then
+                                  if [[ "$test_coverage" == "--" ]]; then
+                                      prev_coverage="--"
+                                      metrics_file="$PREV_FILE"
+                                      if [[ -f "$metrics_file" ]]; then
+                                          prev_coverage=$(jq -r --arg repo "$repo" '.[] | select(.repo == $repo) | .test_coverage // "--"' "$metrics_file")
+                                      fi
+                                      prev_coverage_cleaned=$(echo "$prev_coverage" | sed 's/ *//')
+                                      if [[ "$prev_coverage_cleaned" != "--" && "$prev_coverage_cleaned" != "null" && -n "$prev_coverage_cleaned" ]]; then
+                                          test_coverage="${prev_coverage_cleaned} *"
+                                      fi
+                                  fi
+                                  rm -rf "$tmpdir"
+                              fi
+                              rm -rf "$tmpdir"
+                           else
+                              coverage_file=$(find "$tmpdir" -type f \( -name "coverage.out" -o -name "coverage-*.out" -o -name "linux_cov.part" \) | head -n1)
+                              if [[ -f "$coverage_file" ]]; then
+                                  total=0
+                                  covered=0
+                                  while read -r line; do
+                                      stmts=$(echo "$line" | awk '{print $2}')
+                                      hits=$(echo "$line" | awk '{print $3}')
+                                      total=$((total + stmts))
+                                      if [[ "$hits" -gt 0 ]]; then
+                                          covered=$((covered + stmts))
+                                      fi
+                                  done < "$coverage_file"
 
-                    if [[ -n "$artifact_url" ]]; then
-                        tmpdir=$(mktemp -d)
-                        curl -s -L -H "Authorization: Bearer $GITHUB_APP_TOKEN" \
-                              -H "Accept: application/vnd.github.v3+json" \
-                              "$artifact_url" -o "$tmpdir/artifact.zip"
-                        unzip -q "$tmpdir/artifact.zip" -d "$tmpdir"
-                        coverage_file=$(find "$tmpdir" -type f \( -name "coverage.out" -o -name "coverage-*.out" -o -name "linux_cov.part" \) | head -n1)
+                                  if [[ "$total" -gt 0 ]]; then
+                                      test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100 }")
+                                      rm -rf "$tmpdir"
+                                      break 2
+                                  fi
+                              fi
+                          fi
+                          rm -rf "$tmpdir"
+                          break
+                       fi
+                  done
 
-                        if [[ -f "$coverage_file" ]]; then
-                            total=0
-                            covered=0
-                            while read -r line; do
-                               stmts=$(echo "$line" | awk '{print $2}')
-                               hits=$(echo "$line" | awk '{print $3}')
-                               total=$((total + stmts))
-                               if [[ "$hits" -gt 0 ]]; then
-                                   covered=$((covered + stmts))
-                               fi
-                            done < "$coverage_file"
-
-                            if [[ "$total" -gt 0 ]]; then
-                                test_coverage=$(awk "BEGIN { printf \"%.1f%%\", ($covered/$total)*100 }")
-                                rm -rf "$tmpdir"
-                                break 2
-                            fi
-                        fi
-                        rm -rf "$tmpdir"
-                    fi
-                done
-            done
-        fi
+                  if [[ "$artifact_found" == false && $(echo "$res" | jq '.workflow_runs | length') -lt 100 ]]; then
+                      break
+                  fi
+                  ((page++))
+              done
+           done
+       fi
     fi
 
     # Get the latest release version
