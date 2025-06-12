@@ -7,7 +7,7 @@
     "triggered_on_push_or_pr": true,
     "release_version": "--",
     "tag": "--",
-    "test_coverage": "--"
+    "test_coverage": "80.5%"
   },
   {
     "repo": "errwrap",
