@@ -7,7 +7,7 @@
     "triggered_on_push_or_pr": true,
     "release_version": "--",
     "tag": "v0.5.0",
-    "test_coverage": "--"
+    "test_coverage": "50.0%"
   },
   {
     "repo": "go-cleanhttp",
