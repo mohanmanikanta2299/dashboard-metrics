@@ -171,7 +171,7 @@ fetch_metrics() {
                                       if [[ -f "$metrics_file" ]]; then
                                           prev_coverage=$(jq -r --arg repo "$repo" '.[] | select(.repo == $repo) | .test_coverage // "--"' "$metrics_file")
                                       fi
-                                      prev_coverage_cleaned=$(echo "$prev_coverage" | sed 's/ *//')
+                                      prev_coverage_cleaned=$(echo "$prev_coverage" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
                                       if [[ "$prev_coverage_cleaned" != "--" && "$prev_coverage_cleaned" != "null" && -n "$prev_coverage_cleaned" ]]; then
                                           test_coverage="${prev_coverage_cleaned} *"
                                       fi
